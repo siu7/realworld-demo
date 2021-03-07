@@ -5,7 +5,6 @@ import {
   setLimit,
   setOffset,
   resetArticles,
-  setSlug,
 } from 'features/articles/slice'
 import {
   listArticles,
@@ -107,7 +106,6 @@ function useGetArticle() {
   }, [slug])
 
   return {
-    setSlug: (slug: string) => dispatch(setSlug(slug)),
     article,
     getArticleLoading,
   }

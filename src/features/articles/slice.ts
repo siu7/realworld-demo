@@ -16,8 +16,12 @@ import { defaultErrMsg } from 'api/config'
 
 interface ArticlesState {
   articles: [Article] | []
+  listArticlesParams: ListArticlesParams
+  limit: number
+  offset: number
   article: Article | null
   comments: [Comment] | []
+  slug: string
   listArticlesloading: boolean
   feedArticlesloading: boolean
   getArticleLoading: boolean
@@ -34,6 +38,10 @@ const initialState: ArticlesState = {
   articles: [],
   article: null,
   comments: [],
+  limit: 20,
+  offset: 0,
+  slug: '',
+  listArticlesParams: {},
   listArticlesloading: false,
   feedArticlesloading: false,
   getArticleLoading: false,
@@ -50,6 +58,24 @@ const articlesSlice = createSlice({
   name: 'articles',
   initialState,
   reducers: {
+    setListArticlesParams(state, action: PayloadAction<ListArticlesParams>) {
+      state.listArticlesParams = action.payload
+    },
+    setLimit(state, action: PayloadAction<number>) {
+      state.limit = action.payload
+    },
+    setOffset(state, action: PayloadAction<number>) {
+      state.offset = action.payload
+    },
+    resetArticles(state) {
+      state.articles = []
+      state.offset = 0
+    },
+    setSlug(state, action: PayloadAction<string>) {
+      state.slug = action.payload
+    },
+
+    //async logic
     listArticlesRequest(state) {
       state.listArticlesloading = true
     },
@@ -165,6 +191,14 @@ const articlesSlice = createSlice({
     },
   },
 })
+
+export const {
+  setListArticlesParams,
+  setLimit,
+  setOffset,
+  resetArticles,
+  setSlug,
+} = articlesSlice.actions
 
 const {
   listArticlesRequest,

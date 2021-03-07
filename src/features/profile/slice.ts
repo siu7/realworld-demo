@@ -6,6 +6,7 @@ import { defaultErrMsg } from 'api/config'
 
 interface ProfileState {
   profile: Profile | null
+  username: string
   getProfileLoading: boolean
   followUserLoading: boolean
   unfollowUserLoading: boolean
@@ -13,6 +14,7 @@ interface ProfileState {
 
 const initialState: ProfileState = {
   profile: null,
+  username: '',
   getProfileLoading: false,
   followUserLoading: false,
   unfollowUserLoading: false,
@@ -21,6 +23,9 @@ const profileSlice = createSlice({
   name: 'profile',
   initialState,
   reducers: {
+    setUsername(state, action: PayloadAction<string>) {
+      state.username = action.payload
+    },
     getProfileRequest(state) {
       state.getProfileLoading = true
     },
@@ -55,6 +60,8 @@ const profileSlice = createSlice({
     },
   },
 })
+
+export const { setUsername } = profileSlice.actions
 
 const {
   getProfileRequest,

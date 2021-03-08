@@ -11,6 +11,21 @@ import { usersApi } from 'api/users'
 import { defaultErrMsg } from 'api/config'
 import { tokenSelector } from 'features/user/selectors'
 
+const initUser = getUser()
+
+function getUser(): User | null {
+  let result = localStorage.getItem('user')
+  return result ? JSON.parse(result) : null
+}
+
+function saveUser(user: User) {
+  localStorage.setItem('user', JSON.stringify(user))
+}
+
+//function removeUser() {
+//localStorage.removeItem('user')
+//}
+
 interface UserState {
   user?: User
   authed: boolean
@@ -21,12 +36,16 @@ interface UserState {
   error?: string
 }
 
-const initialState: UserState = {
+let initialState: UserState = {
   authed: false,
   loginLoading: false,
   signupLoading: false,
   getCurrentUserLoading: false,
   updateUserLoading: false,
+}
+if (initUser) {
+  initialState.user = initUser
+  initialState.authed = true
 }
 
 const userSlice = createSlice({
@@ -112,6 +131,7 @@ const login = (user: LoginRequestBody): AppThunk =>
       dispatch(loginRequest())
       let res = await usersApi.login(user)
       dispatch(loginSuccess(res))
+      saveUser(res.user)
     } catch (e) {
       dispatch(loginFailure(defaultErrMsg(e)))
     }
@@ -123,6 +143,7 @@ const signup = (user: SignupRequestBody): AppThunk =>
       dispatch(signupRequest())
       let res = await usersApi.signup(user)
       dispatch(signupSuccess(res))
+      saveUser(res.user)
     } catch (e) {
       dispatch(signupFailure(defaultErrMsg(e)))
     }

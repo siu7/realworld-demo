@@ -17,6 +17,27 @@ import { articlesApi } from 'api/articles'
 import { defaultErrMsg } from 'api/config'
 import { tokenSelector } from 'features/user/selectors'
 
+function initState(): void {
+  let { pathname } = window.location
+  let split = pathname.split('/')
+  let page = split[1]
+  let value = split[2]
+  if (split.length > 2) {
+    // "/editor/article-slug-here", "/article/article-slug-here"
+    if (page === 'article' || page === 'editor') {
+      initialState.slug = value
+    }
+    // /profile/:username
+    if (page === 'profile') {
+      initialState.listArticlesParams.author = value
+    }
+    // /profile/:username/favorites
+    if (page === 'profile' && split[3] === 'favorites') {
+      initialState.listArticlesParams.favorited = value
+    }
+  }
+}
+
 interface ArticlesState {
   articles: Article[]
   listArticlesParams: ListArticlesParams
@@ -38,7 +59,7 @@ interface ArticlesState {
   unfavoriteArticleLoading: boolean
 }
 
-const initialState: ArticlesState = {
+let initialState: ArticlesState = {
   articles: [],
   comments: [],
   limit: 20,
@@ -56,6 +77,7 @@ const initialState: ArticlesState = {
   favoriteArticleLoading: false,
   unfavoriteArticleLoading: false,
 }
+initState()
 
 const articlesSlice = createSlice({
   name: 'articles',

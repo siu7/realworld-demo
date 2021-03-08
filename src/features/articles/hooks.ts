@@ -49,11 +49,14 @@ function useFeedArticles() {
   const { articles, feedArticlesloading, limit, offset } = useAppSelector(
     (state) => state.articles
   )
+  const { authed } = useAppSelector((state) => state.user)
   useEffect(() => {
-    let params = { limit, offset }
-    dispatch(resetArticles())
-    dispatch(feedArticles(params))
-  }, [dispatch, limit, offset])
+    if (authed) {
+      let params = { limit, offset }
+      dispatch(resetArticles())
+      dispatch(feedArticles(params))
+    }
+  }, [dispatch, limit, offset, authed])
 
   return {
     articles,

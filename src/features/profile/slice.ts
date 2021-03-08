@@ -5,6 +5,19 @@ import { profilesApi } from 'api/profiles'
 import { defaultErrMsg } from 'api/config'
 import { tokenSelector } from 'features/user/selectors'
 
+function initState(): void {
+  let { pathname } = window.location
+  let split = pathname.split('/')
+  let page = split[1]
+  let value = split[2]
+  if (split.length > 2) {
+    // /profile/:username
+    if (page === 'profile') {
+      initialState.username = value
+    }
+  }
+}
+
 interface ProfileState {
   profile?: Profile
   username?: string
@@ -13,18 +26,16 @@ interface ProfileState {
   unfollowUserLoading: boolean
 }
 
-const initialState: ProfileState = {
+let initialState: ProfileState = {
   getProfileLoading: false,
   followUserLoading: false,
   unfollowUserLoading: false,
 }
+initState()
 const profileSlice = createSlice({
   name: 'profile',
   initialState,
   reducers: {
-    setUsername(state, action: PayloadAction<string>) {
-      state.username = action.payload
-    },
     getProfileRequest(state) {
       state.getProfileLoading = true
     },
@@ -59,8 +70,6 @@ const profileSlice = createSlice({
     },
   },
 })
-
-export const { setUsername } = profileSlice.actions
 
 const {
   getProfileRequest,

@@ -10,9 +10,9 @@ export function useForm<FormFileds extends { [key: string]: any }>(
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    await onSubmit()
+    onSubmit()
   }
 
   return {

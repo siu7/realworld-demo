@@ -1,20 +1,32 @@
-import { Link } from 'react-router-dom'
+import { Link } from 'wouter'
+import { useAppSelector } from 'app/hooks'
 
 export default function NavBar() {
+  const { isAuth, user } = useAppSelector((state) => state.user)
+  let linkItem = [{ to: '/', text: 'Home' }]
+  if (isAuth && user) {
+    linkItem.push(
+      { to: '/settings', text: 'Settings' },
+      { to: '/editor', text: 'New Article' },
+      { to: `/profile/${user.username}`, text: user.username }
+    )
+  } else {
+    linkItem.push(
+      { to: '/login', text: 'Login' },
+      { to: '/signup', text: 'Signup' }
+    )
+  }
+
   return (
     <div>
       <h3>Conduit</h3>
       <nav>
         <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/login">Login</Link>
-          </li>
-          <li>
-            <Link to="/signup">Signup</Link>
-          </li>
+          {linkItem.map(({ to, text }) => (
+            <li key={to}>
+              <Link to={to}>{text}</Link>
+            </li>
+          ))}
         </ul>
       </nav>
     </div>

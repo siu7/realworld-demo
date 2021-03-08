@@ -1,4 +1,4 @@
-import { api } from './config'
+import { api, authHeader } from './config'
 
 interface User {
   email: string
@@ -53,11 +53,14 @@ const login = async (user: LoginRequestBody): Promise<UserResponse> =>
 const signup = async (user: SignupRequestBody): Promise<UserResponse> =>
   await wretch.post(user).json()
 
-const getCurrentUser = async (): Promise<UserResponse> =>
-  await wretch.get().json()
+const getCurrentUser = async (token: string): Promise<UserResponse> =>
+  await wretch.auth(authHeader(token)).get().json()
 
-const updateUser = async (user: UpdateUserRequestBody): Promise<UserResponse> =>
-  await wretch.put(user).json()
+const updateUser = async (
+  user: UpdateUserRequestBody,
+  token: string
+): Promise<UserResponse> =>
+  await wretch.auth(authHeader(token)).put(user).json()
 
 export const usersApi = {
   login,

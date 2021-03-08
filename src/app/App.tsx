@@ -1,4 +1,4 @@
-import { Switch, Route } from 'react-router-dom'
+import { Switch, Route } from 'wouter'
 import Home from 'pages/Home'
 import Login from 'pages/Login'
 import Signup from 'pages/Signup'
@@ -10,39 +10,38 @@ import Profile from 'pages/Profile'
 import Favorites from 'pages/Profile/Favorites'
 import { useInitReduxStateByUrl } from 'app/useInitReduxStateByUrl'
 import NavBar from 'app/NavBar'
+import { useAppSelector } from 'app/hooks'
+import ProtectedRoute from 'app/ProtectedRoute'
+import AuthedDisabledRoute from 'app/AuthedDisabledRoute'
 
 function App() {
   useInitReduxStateByUrl()
+  const state = useAppSelector((state) => state)
+  const { isAuth } = state.user
+
   return (
     <div>
       <NavBar />
       <Switch>
-        <Route path="/login">
-          <Login />
-        </Route>
-        <Route path="/signup">
-          <Signup />
-        </Route>
-        <Route path="/settings">
-          <Settings />
-        </Route>
-        <Route path="/editor">
-          <Editor />
-        </Route>
-        <Route path="/editor/:slug">
-          <EditArticle />
-        </Route>
-        <Route path="/article/:slug">
-          <Article />
-        </Route>
-        <Route path="/profile/:username">
-          <Profile />
-        </Route>
-        <Route path="/profile/:username/favorite">
-          <Favorites />
-        </Route>
-        <Route path="/">
-          <Home />
+        <AuthedDisabledRoute path="/login" component={Login} isAuth={isAuth} />
+        <AuthedDisabledRoute
+          path="/signup"
+          component={Signup}
+          isAuth={isAuth}
+        />
+        <ProtectedRoute path="/settings" component={Settings} isAuth={isAuth} />
+        <ProtectedRoute path="/editor" component={Editor} isAuth={isAuth} />
+        <ProtectedRoute
+          path="/editor/:slug"
+          component={EditArticle}
+          isAuth={isAuth}
+        />
+        <Route path="/article/:slug" component={Article} />
+        <Route path="/profile/:username" component={Profile} />
+        <Route path="/profile/:username/favorite" component={Favorites} />
+        <Route path="/" component={Home} />
+        <Route path="/:rest*">
+          {(params) => `404, Sorry the page ${params.rest} does not exist!`}
         </Route>
       </Switch>
     </div>

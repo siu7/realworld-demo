@@ -9,9 +9,11 @@ import type {
 } from 'api/users'
 import { usersApi } from 'api/users'
 import { defaultErrMsg } from 'api/config'
+import tokenSelector from 'features/user/tokenSelector'
 
 interface UserState {
   user: User | null
+  isAuth: boolean
   loginLoading: boolean
   signupLoading: boolean
   getCurrentUserLoading: boolean
@@ -21,6 +23,7 @@ interface UserState {
 
 const initialState: UserState = {
   user: null,
+  isAuth: false,
   loginLoading: false,
   signupLoading: false,
   getCurrentUserLoading: false,
@@ -42,6 +45,8 @@ const userSlice = createSlice({
     loginSuccess(state, action: PayloadAction<UserResponse>) {
       state.user = action.payload.user
       state.loginLoading = false
+      state.error = null
+      state.isAuth = true
     },
     loginFailure(state, action: PayloadAction<string>) {
       state.error = action.payload
@@ -54,6 +59,8 @@ const userSlice = createSlice({
     signupSuccess(state, action: PayloadAction<UserResponse>) {
       state.user = action.payload.user
       state.signupLoading = false
+      state.error = null
+      state.isAuth = true
     },
     signupFailure(state, action: PayloadAction<string>) {
       state.error = action.payload
@@ -125,10 +132,11 @@ const signup = (user: SignupRequestBody): AppThunk =>
   }
 
 const getCurrentUser = (): AppThunk =>
-  async function (dispatch) {
+  async function (dispatch, getState) {
     dispatch(getCurrentUserRequest())
     try {
-      let res = await usersApi.getCurrentUser()
+      let token = tokenSelector(getState())
+      let res = await usersApi.getCurrentUser(token)
       dispatch(getCurrentUserSuccess(res))
     } catch (e) {
       dispatch(getCurrentUserFailure(defaultErrMsg(e)))
@@ -136,10 +144,11 @@ const getCurrentUser = (): AppThunk =>
   }
 
 const updateUser = (user: UpdateUserRequestBody): AppThunk =>
-  async function (dispatch) {
+  async function (dispatch, getState) {
     dispatch(updateUserRequest())
     try {
-      let res = await usersApi.updateUser(user)
+      let token = tokenSelector(getState())
+      let res = await usersApi.updateUser(user, token)
       dispatch(updateUserSuccess(res))
     } catch (e) {
       dispatch(updateUserFailure(defaultErrMsg(e)))

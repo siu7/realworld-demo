@@ -11,7 +11,8 @@ export default function Login() {
       resetError()
       setDidLoad(true)
     }
-  }, [didLoad])
+  }, [didLoad, resetError])
+
   const { formData, handleInputChange, handleSubmit } = useForm<
     LoginRequestBody['user']
   >(
@@ -24,6 +25,7 @@ export default function Login() {
         user: formData,
       })
   )
+
   const { email, password } = formData
   return (
     <form onSubmit={handleSubmit}>

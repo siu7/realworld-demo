@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSignup } from 'features/user/useUser'
 import { useForm } from 'app/useForm'
 import type { SignupRequestBody } from 'api/users'
@@ -6,10 +6,12 @@ import type { SignupRequestBody } from 'api/users'
 export default function Signup() {
   const [didLoad, setDidLoad] = useState(false)
   const { signupLoading, signup, error, resetError } = useSignup()
-  if (!didLoad) {
-    resetError()
-    setDidLoad(true)
-  }
+  useEffect(() => {
+    if (!didLoad) {
+      resetError()
+      setDidLoad(true)
+    }
+  }, [didLoad, resetError])
 
   const { formData, handleInputChange, handleSubmit } = useForm<
     SignupRequestBody['user']

@@ -1,4 +1,4 @@
-import { api } from './config'
+import { api, authHeader } from './config'
 
 interface Profile {
   username: string
@@ -15,14 +15,29 @@ export type { Profile, ProfileResponse }
 
 let wretch = api.url('/profiles')
 
-const getProfile = async (username: string): Promise<ProfileResponse> =>
-  await wretch.url(`/${username}`).get().json()
+const getProfile = async (
+  username: string,
+  token: string
+): Promise<ProfileResponse> =>
+  token !== ''
+    ? await wretch.auth(authHeader(token)).url(`/${username}`).get().json()
+    : await wretch.url(`/${username}`).get().json()
 
-const followUser = async (username: string): Promise<ProfileResponse> =>
-  await wretch.url(`/${username}/follow`).post().json()
+const followUser = async (
+  username: string,
+  token: string
+): Promise<ProfileResponse> =>
+  await wretch.auth(authHeader(token)).url(`/${username}/follow`).post().json()
 
-const unfollowUser = async (username: string): Promise<ProfileResponse> =>
-  await wretch.url(`/${username}/follow`).delete().json()
+const unfollowUser = async (
+  username: string,
+  token: string
+): Promise<ProfileResponse> =>
+  await wretch
+    .auth(authHeader(token))
+    .url(`/${username}/follow`)
+    .delete()
+    .json()
 
 export const profilesApi = {
   getProfile,

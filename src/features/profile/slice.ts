@@ -3,6 +3,7 @@ import { AppThunk } from 'app/store'
 import type { Profile, ProfileResponse } from 'api/profiles'
 import { profilesApi } from 'api/profiles'
 import { defaultErrMsg } from 'api/config'
+import tokenSelector from 'features/user/tokenSelector'
 
 interface ProfileState {
   profile: Profile | null
@@ -77,10 +78,11 @@ const {
 export default profileSlice.reducer
 
 const getProfile = (username: string): AppThunk =>
-  async function (dispatch) {
+  async function (dispatch, getState) {
     dispatch(getProfileRequest())
     try {
-      let res = await profilesApi.getProfile(username)
+      let token = tokenSelector(getState())
+      let res = await profilesApi.getProfile(username, token)
       dispatch(getProfileSuccess(res))
     } catch (e) {
       dispatch(getProfileFailure(defaultErrMsg(e)))
@@ -88,10 +90,11 @@ const getProfile = (username: string): AppThunk =>
   }
 
 const followUser = (username: string): AppThunk =>
-  async function (dispatch) {
+  async function (dispatch, getState) {
     dispatch(followUserRequest())
     try {
-      let res = await profilesApi.followUser(username)
+      let token = tokenSelector(getState())
+      let res = await profilesApi.followUser(username, token)
       dispatch(followUserSuccess(res))
     } catch (e) {
       dispatch(followUserFailure(defaultErrMsg(e)))
@@ -99,10 +102,11 @@ const followUser = (username: string): AppThunk =>
   }
 
 const unfollowUser = (username: string): AppThunk =>
-  async function (dispatch) {
+  async function (dispatch, getState) {
     dispatch(unfollowUserRequest())
     try {
-      let res = await profilesApi.unfollowUser(username)
+      let token = tokenSelector(getState())
+      let res = await profilesApi.unfollowUser(username, token)
       dispatch(unfollowUserSuccess(res))
     } catch (e) {
       dispatch(unfollowUserFailure(defaultErrMsg(e)))

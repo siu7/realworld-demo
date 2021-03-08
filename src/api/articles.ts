@@ -1,4 +1,4 @@
-import { api } from './config'
+import { api, authHeader } from './config'
 import type { Profile } from 'api/profiles'
 
 interface Article {
@@ -61,6 +61,16 @@ interface Comment {
   author: Profile
 }
 
+interface AddCommentRequestBody {
+  comment: {
+    body: string
+  }
+}
+
+interface CommentResponse {
+  comment: Comment
+}
+
 interface MultipleCommentsResponse {
   comments: [Comment]
 }
@@ -84,36 +94,71 @@ const listArticles = async (
 ): Promise<MultipleArticlesResponse> => await wretch.query(params).get().json()
 
 const feedArticles = async (
-  params: FeedArticlesParams = {}
+  params: FeedArticlesParams = {},
+  token: string
 ): Promise<MultipleArticlesResponse> =>
-  await wretch.url('/feed').query(params).get().json()
+  await wretch.auth(authHeader(token)).url('/feed').query(params).get().json()
 
 const getArticle = async (slug: string): Promise<ArticleResponse> =>
   await wretch.url(`/${slug}`).get().json()
 
 const createArticle = async (
-  article: CreateArticleRequestBody
-): Promise<ArticleResponse> => await wretch.post(article).json()
+  article: CreateArticleRequestBody,
+  token: string
+): Promise<ArticleResponse> =>
+  await wretch.auth(authHeader(token)).post(article).json()
 
 const updateArticle = async (
   slug: string,
-  article: UpdateArticleRequestBody
-): Promise<ArticleResponse> => await wretch.url(`/${slug}`).put(article).json()
+  article: UpdateArticleRequestBody,
+  token: string
+): Promise<ArticleResponse> =>
+  await wretch.auth(authHeader(token)).url(`/${slug}`).put(article).json()
 
-const deleteArticle = async (slug: string): Promise<any> =>
-  await wretch.url(`/${slug}`).delete().json()
+const deleteArticle = async (slug: string, token: string): Promise<any> =>
+  await wretch.auth(authHeader(token)).url(`/${slug}`).delete().json()
 
-const getComments = async (slug: string): Promise<MultipleCommentsResponse> =>
-  await wretch.url(`/${slug}/comments`).get().json()
+const addComment = async (
+  slug: string,
+  comment: AddCommentRequestBody,
+  token: string
+): Promise<CommentResponse> =>
+  await wretch
+    .auth(authHeader(token))
+    .url(`/${slug}/comments`)
+    .post(comment)
+    .json()
 
-const deleteComment = async (slug: string, id: number): Promise<any> =>
-  await wretch.url(`/${slug}/comments/${id}`).delete().json()
+const getComments = async (
+  slug: string,
+  token: string
+): Promise<MultipleCommentsResponse> =>
+  token !== ''
+    ? await wretch.url(`/${slug}/comments`).get().json()
+    : await wretch.auth(authHeader(token)).url(`/${slug}/comments`).get().json()
 
-const favoriteArticle = async (slug: string): Promise<ArticleResponse> =>
-  await wretch.url(`/${slug}/favorite`).post().json()
+const deleteComment = async (
+  slug: string,
+  id: number,
+  token: string
+): Promise<any> =>
+  await wretch
+    .auth(authHeader(token))
+    .url(`/${slug}/comments/${id}`)
+    .delete()
+    .json()
 
-const unfavoriteArticle = async (slug: string): Promise<ArticleResponse> =>
-  await wretch.url(`/${slug}/favorite`).delete().json()
+const favoriteArticle = async (
+  slug: string,
+  token: string
+): Promise<ArticleResponse> =>
+  await wretch.auth(authHeader(token)).url(`/${slug}/favorite`).post().json()
+
+const unfavoriteArticle = async (
+  slug: string,
+  token: string
+): Promise<ArticleResponse> =>
+  await wretch.auth(authHeader(token)).url(`/${slug}/favorite`).delete().json()
 
 export const articlesApi = {
   listArticles,
@@ -122,6 +167,7 @@ export const articlesApi = {
   createArticle,
   updateArticle,
   deleteArticle,
+  addComment,
   getComments,
   deleteComment,
   favoriteArticle,

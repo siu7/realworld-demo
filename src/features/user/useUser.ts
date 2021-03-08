@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from 'app/hooks'
 import { login, signup, updateUser } from 'features/user/slice'
+import { resetError } from 'features/user/slice'
 import type {
   LoginRequestBody,
   SignupRequestBody,
@@ -8,20 +9,24 @@ import type {
 
 function useLogin() {
   const dispatch = useAppDispatch()
-  const { loginLoading } = useAppSelector((state) => state.user)
+  const { loginLoading, error } = useAppSelector((state) => state.user)
 
   return {
     loginLoading,
+    error,
+    resetError: () => dispatch(resetError()),
     login: (user: LoginRequestBody) => dispatch(login(user)),
   }
 }
 
 function useSignup() {
   const dispatch = useAppDispatch()
-  const { signupLoading } = useAppSelector((state) => state.user)
+  const { signupLoading, error } = useAppSelector((state) => state.user)
 
   return {
     signupLoading,
+    error,
+    resetError: () => dispatch(resetError()),
     signup: (user: SignupRequestBody) => dispatch(signup(user)),
   }
 }

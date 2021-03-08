@@ -1,10 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  useParams,
-  useLocation,
-} from 'react-router-dom'
+import { Switch, Route } from 'react-router-dom'
 import Home from 'pages/Home'
 import Login from 'pages/Login'
 import Signup from 'pages/Signup'
@@ -14,13 +8,14 @@ import EditArticle from 'pages/Editor/EditArticle'
 import Article from 'pages/Article'
 import Profile from 'pages/Profile'
 import Favorites from 'pages/Profile/Favorites'
+import { useInitReduxStateByUrl } from 'app/useInitReduxStateByUrl'
+import NavBar from 'app/NavBar'
 
 function App() {
-  const params = useParams()
-  const location = useLocation()
-  console.log(params, location)
+  useInitReduxStateByUrl()
   return (
-    <Router>
+    <div>
+      <NavBar />
       <Switch>
         <Route path="/login">
           <Login />
@@ -50,7 +45,7 @@ function App() {
           <Home />
         </Route>
       </Switch>
-    </Router>
+    </div>
   )
 }
 

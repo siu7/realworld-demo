@@ -1,16 +1,18 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit'
-import articles from 'features/articles/slice'
-import tags from 'features/tags/slice'
+import logger from 'redux-logger'
+import articlesReducer from 'features/articles/slice'
+import tagsReducer from 'features/tags/slice'
 import user from 'features/user/slice'
 import profile from 'features/profile/slice'
 
 export const store = configureStore({
   reducer: {
-    articles,
-    tags,
+    articles: articlesReducer,
+    tags: tagsReducer,
     user,
     profile,
   },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 })
 
 export type RootState = ReturnType<typeof store.getState>

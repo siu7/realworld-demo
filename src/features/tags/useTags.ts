@@ -8,7 +8,7 @@ function useGetTags() {
 
   useEffect(() => {
     dispatch(getTags())
-  }, [tags])
+  }, [dispatch])
 
   return {
     tags,

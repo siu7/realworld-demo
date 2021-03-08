@@ -32,12 +32,11 @@ function useListArticles() {
     limit,
     offset,
   } = useAppSelector((state) => state.articles)
-  let params = { ...listArticlesParams, limit, offset }
 
   useEffect(() => {
-    dispatch(resetArticles())
+    let params = { ...listArticlesParams, limit, offset }
     dispatch(listArticles(params))
-  }, [params])
+  }, [dispatch, listArticlesParams, limit, offset])
 
   return {
     articles,
@@ -50,11 +49,11 @@ function useFeedArticles() {
   const { articles, feedArticlesloading, limit, offset } = useAppSelector(
     (state) => state.articles
   )
-  let params = { limit, offset }
   useEffect(() => {
+    let params = { limit, offset }
     dispatch(resetArticles())
     dispatch(feedArticles(params))
-  }, [params])
+  }, [dispatch, limit, offset])
 
   return {
     articles,
@@ -103,7 +102,7 @@ function useGetArticle() {
   )
   useEffect(() => {
     dispatch(getArticle(slug))
-  }, [slug])
+  }, [dispatch, slug])
 
   return {
     article,
@@ -150,7 +149,7 @@ function useGetComments() {
   )
   useEffect(() => {
     dispatch(getComments(slug))
-  }, [slug])
+  }, [dispatch, slug])
 
   return {
     comments,

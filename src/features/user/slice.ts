@@ -16,6 +16,7 @@ interface UserState {
   signupLoading: boolean
   getCurrentUserLoading: boolean
   updateUserLoading: boolean
+  error: string | null
 }
 
 const initialState: UserState = {
@@ -24,12 +25,17 @@ const initialState: UserState = {
   signupLoading: false,
   getCurrentUserLoading: false,
   updateUserLoading: false,
+  error: null,
 }
 
 const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
+    resetError(state) {
+      state.error = null
+    },
+
     loginRequest(state) {
       state.loginLoading = true
     },
@@ -37,7 +43,8 @@ const userSlice = createSlice({
       state.user = action.payload.user
       state.loginLoading = false
     },
-    loginFailure(state, _action: PayloadAction<string>) {
+    loginFailure(state, action: PayloadAction<string>) {
+      state.error = action.payload
       state.loginLoading = false
     },
 
@@ -48,7 +55,8 @@ const userSlice = createSlice({
       state.user = action.payload.user
       state.signupLoading = false
     },
-    signupFailure(state, _action: PayloadAction<string>) {
+    signupFailure(state, action: PayloadAction<string>) {
+      state.error = action.payload
       state.signupLoading = false
     },
 
@@ -75,6 +83,8 @@ const userSlice = createSlice({
     },
   },
 })
+
+export const { resetError } = userSlice.actions
 
 const {
   loginRequest,

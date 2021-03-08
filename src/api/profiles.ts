@@ -24,7 +24,7 @@ const followUser = async (username: string): Promise<ProfileResponse> =>
 const unfollowUser = async (username: string): Promise<ProfileResponse> =>
   await wretch.url(`/${username}/follow`).delete().json()
 
-export const profiles = {
+export const profilesApi = {
   getProfile,
   followUser,
   unfollowUser,

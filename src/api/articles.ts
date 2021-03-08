@@ -77,7 +77,7 @@ export type {
   MultipleCommentsResponse,
 }
 
-let wretch = api.url('/articless')
+let wretch = api.url('/articles')
 
 const listArticles = async (
   params: ListArticlesParams = {}

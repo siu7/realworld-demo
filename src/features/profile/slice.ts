@@ -3,19 +3,17 @@ import { AppThunk } from 'app/store'
 import type { Profile, ProfileResponse } from 'api/profiles'
 import { profilesApi } from 'api/profiles'
 import { defaultErrMsg } from 'api/config'
-import tokenSelector from 'features/user/tokenSelector'
+import { tokenSelector } from 'features/user/selectors'
 
 interface ProfileState {
-  profile: Profile | null
-  username: string
+  profile?: Profile
+  username?: string
   getProfileLoading: boolean
   followUserLoading: boolean
   unfollowUserLoading: boolean
 }
 
 const initialState: ProfileState = {
-  profile: null,
-  username: '',
   getProfileLoading: false,
   followUserLoading: false,
   unfollowUserLoading: false,
@@ -79,8 +77,8 @@ export default profileSlice.reducer
 
 const getProfile = (username: string): AppThunk =>
   async function (dispatch, getState) {
-    dispatch(getProfileRequest())
     try {
+      dispatch(getProfileRequest())
       let token = tokenSelector(getState())
       let res = await profilesApi.getProfile(username, token)
       dispatch(getProfileSuccess(res))
@@ -91,11 +89,13 @@ const getProfile = (username: string): AppThunk =>
 
 const followUser = (username: string): AppThunk =>
   async function (dispatch, getState) {
-    dispatch(followUserRequest())
     try {
+      dispatch(followUserRequest())
       let token = tokenSelector(getState())
-      let res = await profilesApi.followUser(username, token)
-      dispatch(followUserSuccess(res))
+      if (token) {
+        let res = await profilesApi.followUser(username, token)
+        dispatch(followUserSuccess(res))
+      }
     } catch (e) {
       dispatch(followUserFailure(defaultErrMsg(e)))
     }
@@ -103,11 +103,13 @@ const followUser = (username: string): AppThunk =>
 
 const unfollowUser = (username: string): AppThunk =>
   async function (dispatch, getState) {
-    dispatch(unfollowUserRequest())
     try {
+      dispatch(unfollowUserRequest())
       let token = tokenSelector(getState())
-      let res = await profilesApi.unfollowUser(username, token)
-      dispatch(unfollowUserSuccess(res))
+      if (token) {
+        let res = await profilesApi.unfollowUser(username, token)
+        dispatch(unfollowUserSuccess(res))
+      }
     } catch (e) {
       dispatch(unfollowUserFailure(defaultErrMsg(e)))
     }

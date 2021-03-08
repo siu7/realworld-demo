@@ -16,25 +16,24 @@ import AuthedDisabledRoute from 'app/AuthedDisabledRoute'
 
 function App() {
   useInitReduxStateByUrl()
-  const state = useAppSelector((state) => state)
-  const { isAuth } = state.user
+  const { authed } = useAppSelector((state) => state.user)
 
   return (
     <div>
       <NavBar />
       <Switch>
-        <AuthedDisabledRoute path="/login" component={Login} isAuth={isAuth} />
+        <AuthedDisabledRoute path="/login" component={Login} authed={authed} />
         <AuthedDisabledRoute
           path="/signup"
           component={Signup}
-          isAuth={isAuth}
+          authed={authed}
         />
-        <ProtectedRoute path="/settings" component={Settings} isAuth={isAuth} />
-        <ProtectedRoute path="/editor" component={Editor} isAuth={isAuth} />
+        <ProtectedRoute path="/settings" component={Settings} authed={authed} />
+        <ProtectedRoute path="/editor" component={Editor} authed={authed} />
         <ProtectedRoute
           path="/editor/:slug"
           component={EditArticle}
-          isAuth={isAuth}
+          authed={authed}
         />
         <Route path="/article/:slug" component={Article} />
         <Route path="/profile/:username" component={Profile} />

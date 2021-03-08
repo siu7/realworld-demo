@@ -84,14 +84,20 @@ export type {
   CreateArticleRequestBody,
   UpdateArticleRequestBody,
   Comment,
+  AddCommentRequestBody,
+  CommentResponse,
   MultipleCommentsResponse,
 }
 
 let wretch = api.url('/articles')
 
 const listArticles = async (
-  params: ListArticlesParams = {}
-): Promise<MultipleArticlesResponse> => await wretch.query(params).get().json()
+  params: ListArticlesParams = {},
+  token: string | null
+): Promise<MultipleArticlesResponse> =>
+  token
+    ? await wretch.auth(authHeader(token)).query(params).get().json()
+    : await wretch.query(params).get().json()
 
 const feedArticles = async (
   params: FeedArticlesParams = {},
@@ -131,11 +137,11 @@ const addComment = async (
 
 const getComments = async (
   slug: string,
-  token: string
+  token: string | null
 ): Promise<MultipleCommentsResponse> =>
-  token !== ''
-    ? await wretch.url(`/${slug}/comments`).get().json()
-    : await wretch.auth(authHeader(token)).url(`/${slug}/comments`).get().json()
+  token
+    ? await wretch.auth(authHeader(token)).url(`/${slug}/comments`).get().json()
+    : await wretch.url(`/${slug}/comments`).get().json()
 
 const deleteComment = async (
   slug: string,

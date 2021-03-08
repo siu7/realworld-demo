@@ -9,26 +9,29 @@ import type {
   CreateArticleRequestBody,
   UpdateArticleRequestBody,
   Comment,
+  AddCommentRequestBody,
+  CommentResponse,
   MultipleCommentsResponse,
 } from 'api/articles'
 import { articlesApi } from 'api/articles'
 import { defaultErrMsg } from 'api/config'
-import tokenSelector from 'features/user/tokenSelector'
+import { tokenSelector } from 'features/user/selectors'
 
 interface ArticlesState {
-  articles: [Article] | []
+  articles: Article[]
   listArticlesParams: ListArticlesParams
   limit: number
   offset: number
-  article: Article | null
-  comments: [Comment] | []
-  slug: string
+  slug?: string
+  article?: Article
+  comments: Comment[]
   listArticlesloading: boolean
   feedArticlesloading: boolean
   getArticleLoading: boolean
   createArticleLoading: boolean
   updateArticleLoading: boolean
   deleteArticleLoading: boolean
+  addCommentLoading: boolean
   getCommentsLoading: boolean
   deleteCommentLoading: boolean
   favoriteArticleLoading: boolean
@@ -37,11 +40,9 @@ interface ArticlesState {
 
 const initialState: ArticlesState = {
   articles: [],
-  article: null,
   comments: [],
   limit: 20,
   offset: 0,
-  slug: '',
   listArticlesParams: {},
   listArticlesloading: false,
   feedArticlesloading: false,
@@ -49,6 +50,7 @@ const initialState: ArticlesState = {
   createArticleLoading: false,
   updateArticleLoading: false,
   deleteArticleLoading: false,
+  addCommentLoading: false,
   getCommentsLoading: false,
   deleteCommentLoading: false,
   favoriteArticleLoading: false,
@@ -148,6 +150,17 @@ const articlesSlice = createSlice({
       state.deleteArticleLoading = false
     },
 
+    addCommentRequest(state) {
+      state.addCommentLoading = true
+    },
+    addCommentSuccess(state, action: PayloadAction<CommentResponse>) {
+      state.comments.push(action.payload.comment)
+      state.addCommentLoading = false
+    },
+    addCommentFailure(state, _action: PayloadAction<string>) {
+      state.addCommentLoading = false
+    },
+
     getCommentsRequest(state) {
       state.getCommentsLoading = true
     },
@@ -220,6 +233,9 @@ const {
   deleteArticleRequest,
   deleteArticleSuccess,
   deleteArticleFailure,
+  addCommentRequest,
+  addCommentSuccess,
+  addCommentFailure,
   getCommentsRequest,
   getCommentsSuccess,
   getCommentsFailure,
@@ -236,10 +252,11 @@ const {
 export default articlesSlice.reducer
 
 const listArticles = (params: ListArticlesParams = {}): AppThunk =>
-  async function (dispatch) {
-    dispatch(listArticlesRequest())
+  async function (dispatch, getState) {
     try {
-      let res = await articlesApi.listArticles(params)
+      dispatch(listArticlesRequest())
+      let token = tokenSelector(getState())
+      let res = await articlesApi.listArticles(params, token)
       dispatch(listArticlesSuccess(res))
     } catch (e) {
       dispatch(listArticlesFailure(defaultErrMsg(e)))
@@ -248,11 +265,13 @@ const listArticles = (params: ListArticlesParams = {}): AppThunk =>
 
 const feedArticles = (params: FeedArticlesParams = {}): AppThunk =>
   async function (dispatch, getState) {
-    dispatch(feedArticlesRequest())
     try {
+      dispatch(feedArticlesRequest())
       let token = tokenSelector(getState())
-      let res = await articlesApi.feedArticles(params, token)
-      dispatch(feedArticlesSuccess(res))
+      if (token) {
+        let res = await articlesApi.feedArticles(params, token)
+        dispatch(feedArticlesSuccess(res))
+      }
     } catch (e) {
       dispatch(feedArticlesFailure(defaultErrMsg(e)))
     }
@@ -260,8 +279,8 @@ const feedArticles = (params: FeedArticlesParams = {}): AppThunk =>
 
 const getArticle = (slug: string): AppThunk =>
   async function (dispatch) {
-    dispatch(getArticleRequest())
     try {
+      dispatch(getArticleRequest())
       let res = await articlesApi.getArticle(slug)
       dispatch(getArticleSuccess(res))
     } catch (e) {
@@ -271,11 +290,13 @@ const getArticle = (slug: string): AppThunk =>
 
 const createArticle = (article: CreateArticleRequestBody): AppThunk =>
   async function (dispatch, getState) {
-    dispatch(createArticleRequest())
     try {
+      dispatch(createArticleRequest())
       let token = tokenSelector(getState())
-      let res = await articlesApi.createArticle(article, token)
-      dispatch(createArticleSuccess(res))
+      if (token) {
+        let res = await articlesApi.createArticle(article, token)
+        dispatch(createArticleSuccess(res))
+      }
     } catch (e) {
       dispatch(createArticleFailure(defaultErrMsg(e)))
     }
@@ -286,11 +307,13 @@ const updateArticle = (
   article: UpdateArticleRequestBody
 ): AppThunk =>
   async function (dispatch, getState) {
-    dispatch(updateArticleRequest())
     try {
+      dispatch(updateArticleRequest())
       let token = tokenSelector(getState())
-      let res = await articlesApi.updateArticle(slug, article, token)
-      dispatch(updateArticleSuccess(res))
+      if (token) {
+        let res = await articlesApi.updateArticle(slug, article, token)
+        dispatch(updateArticleSuccess(res))
+      }
     } catch (e) {
       dispatch(updateArticleFailure(defaultErrMsg(e)))
     }
@@ -298,20 +321,36 @@ const updateArticle = (
 
 const deleteArticle = (slug: string): AppThunk =>
   async function (dispatch, getState) {
-    dispatch(deleteArticleRequest())
     try {
+      dispatch(deleteArticleRequest())
       let token = tokenSelector(getState())
-      await articlesApi.deleteArticle(slug, token)
-      dispatch(deleteArticleSuccess())
+      if (token) {
+        await articlesApi.deleteArticle(slug, token)
+        dispatch(deleteArticleSuccess())
+      }
     } catch (e) {
       dispatch(deleteArticleFailure(defaultErrMsg(e)))
     }
   }
 
+const addComment = (slug: string, comment: AddCommentRequestBody): AppThunk =>
+  async function (dispatch, getState) {
+    try {
+      dispatch(addCommentRequest())
+      let token = tokenSelector(getState())
+      if (token) {
+        let res = await articlesApi.addComment(slug, comment, token)
+        dispatch(addCommentSuccess(res))
+      }
+    } catch (e) {
+      dispatch(addCommentFailure(defaultErrMsg(e)))
+    }
+  }
+
 const getComments = (slug: string): AppThunk =>
   async function (dispatch, getState) {
-    dispatch(getCommentsRequest())
     try {
+      dispatch(getCommentsRequest())
       let token = tokenSelector(getState())
       let res = await articlesApi.getComments(slug, token)
       dispatch(getCommentsSuccess(res))
@@ -322,11 +361,13 @@ const getComments = (slug: string): AppThunk =>
 
 const deleteComment = (slug: string, id: number): AppThunk =>
   async function (dispatch, getState) {
-    dispatch(deleteCommentRequest())
     try {
+      dispatch(deleteCommentRequest())
       let token = tokenSelector(getState())
-      await articlesApi.deleteComment(slug, id, token)
-      dispatch(deleteCommentSuccess())
+      if (token) {
+        await articlesApi.deleteComment(slug, id, token)
+        dispatch(deleteCommentSuccess())
+      }
     } catch (e) {
       dispatch(deleteCommentFailure(defaultErrMsg(e)))
     }
@@ -334,11 +375,13 @@ const deleteComment = (slug: string, id: number): AppThunk =>
 
 const favoriteArticle = (slug: string): AppThunk =>
   async function (dispatch, getState) {
-    dispatch(favoriteArticleRequest())
     try {
+      dispatch(favoriteArticleRequest())
       let token = tokenSelector(getState())
-      let res = await articlesApi.favoriteArticle(slug, token)
-      dispatch(favoriteArticleSuccess(res))
+      if (token) {
+        let res = await articlesApi.favoriteArticle(slug, token)
+        dispatch(favoriteArticleSuccess(res))
+      }
     } catch (e) {
       dispatch(favoriteArticleFailure(defaultErrMsg(e)))
     }
@@ -346,11 +389,13 @@ const favoriteArticle = (slug: string): AppThunk =>
 
 const unfavoriteArticle = (slug: string): AppThunk =>
   async function (dispatch, getState) {
-    dispatch(unfavoriteArticleRequest())
     try {
+      dispatch(unfavoriteArticleRequest())
       let token = tokenSelector(getState())
-      let res = await articlesApi.unfavoriteArticle(slug, token)
-      dispatch(unfavoriteArticleSuccess(res))
+      if (token) {
+        let res = await articlesApi.unfavoriteArticle(slug, token)
+        dispatch(unfavoriteArticleSuccess(res))
+      }
     } catch (e) {
       dispatch(unfavoriteArticleFailure(defaultErrMsg(e)))
     }
@@ -363,6 +408,7 @@ export {
   createArticle,
   updateArticle,
   deleteArticle,
+  addComment,
   getComments,
   deleteComment,
   favoriteArticle,

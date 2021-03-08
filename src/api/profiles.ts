@@ -17,9 +17,9 @@ let wretch = api.url('/profiles')
 
 const getProfile = async (
   username: string,
-  token: string
+  token: string | null
 ): Promise<ProfileResponse> =>
-  token !== ''
+  token
     ? await wretch.auth(authHeader(token)).url(`/${username}`).get().json()
     : await wretch.url(`/${username}`).get().json()
 

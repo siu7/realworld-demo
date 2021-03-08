@@ -2,9 +2,9 @@ import { Link } from 'wouter'
 import { useAppSelector } from 'app/hooks'
 
 export default function NavBar() {
-  const { isAuth, user } = useAppSelector((state) => state.user)
+  const { authed, user } = useAppSelector((state) => state.user)
   let linkItem = [{ to: '/', text: 'Home' }]
-  if (isAuth && user) {
+  if (authed && user) {
     linkItem.push(
       { to: '/settings', text: 'Settings' },
       { to: '/editor', text: 'New Article' },

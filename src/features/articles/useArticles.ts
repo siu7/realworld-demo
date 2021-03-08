@@ -101,7 +101,7 @@ function useGetArticle() {
     (state) => state.articles
   )
   useEffect(() => {
-    dispatch(getArticle(slug))
+    if (slug) dispatch(getArticle(slug))
   }, [dispatch, slug])
 
   return {
@@ -148,7 +148,7 @@ function useGetComments() {
     (state) => state.articles
   )
   useEffect(() => {
-    dispatch(getComments(slug))
+    if (slug) dispatch(getComments(slug))
   }, [dispatch, slug])
 
   return {

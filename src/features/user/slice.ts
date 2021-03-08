@@ -9,26 +9,24 @@ import type {
 } from 'api/users'
 import { usersApi } from 'api/users'
 import { defaultErrMsg } from 'api/config'
-import tokenSelector from 'features/user/tokenSelector'
+import { tokenSelector } from 'features/user/selectors'
 
 interface UserState {
-  user: User | null
-  isAuth: boolean
+  user?: User
+  authed: boolean
   loginLoading: boolean
   signupLoading: boolean
   getCurrentUserLoading: boolean
   updateUserLoading: boolean
-  error: string | null
+  error?: string
 }
 
 const initialState: UserState = {
-  user: null,
-  isAuth: false,
+  authed: false,
   loginLoading: false,
   signupLoading: false,
   getCurrentUserLoading: false,
   updateUserLoading: false,
-  error: null,
 }
 
 const userSlice = createSlice({
@@ -36,17 +34,16 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     resetError(state) {
-      state.error = null
+      delete state.error
     },
-
     loginRequest(state) {
       state.loginLoading = true
     },
     loginSuccess(state, action: PayloadAction<UserResponse>) {
       state.user = action.payload.user
       state.loginLoading = false
-      state.error = null
-      state.isAuth = true
+      delete state.error
+      state.authed = true
     },
     loginFailure(state, action: PayloadAction<string>) {
       state.error = action.payload
@@ -59,8 +56,8 @@ const userSlice = createSlice({
     signupSuccess(state, action: PayloadAction<UserResponse>) {
       state.user = action.payload.user
       state.signupLoading = false
-      state.error = null
-      state.isAuth = true
+      delete state.error
+      state.authed = true
     },
     signupFailure(state, action: PayloadAction<string>) {
       state.error = action.payload
@@ -111,8 +108,8 @@ export default userSlice.reducer
 
 const login = (user: LoginRequestBody): AppThunk =>
   async function (dispatch) {
-    dispatch(loginRequest())
     try {
+      dispatch(loginRequest())
       let res = await usersApi.login(user)
       dispatch(loginSuccess(res))
     } catch (e) {
@@ -122,8 +119,8 @@ const login = (user: LoginRequestBody): AppThunk =>
 
 const signup = (user: SignupRequestBody): AppThunk =>
   async function (dispatch) {
-    dispatch(signupRequest())
     try {
+      dispatch(signupRequest())
       let res = await usersApi.signup(user)
       dispatch(signupSuccess(res))
     } catch (e) {
@@ -133,11 +130,13 @@ const signup = (user: SignupRequestBody): AppThunk =>
 
 const getCurrentUser = (): AppThunk =>
   async function (dispatch, getState) {
-    dispatch(getCurrentUserRequest())
     try {
+      dispatch(getCurrentUserRequest())
       let token = tokenSelector(getState())
-      let res = await usersApi.getCurrentUser(token)
-      dispatch(getCurrentUserSuccess(res))
+      if (token) {
+        let res = await usersApi.getCurrentUser(token)
+        dispatch(getCurrentUserSuccess(res))
+      }
     } catch (e) {
       dispatch(getCurrentUserFailure(defaultErrMsg(e)))
     }
@@ -145,11 +144,13 @@ const getCurrentUser = (): AppThunk =>
 
 const updateUser = (user: UpdateUserRequestBody): AppThunk =>
   async function (dispatch, getState) {
-    dispatch(updateUserRequest())
     try {
+      dispatch(updateUserRequest())
       let token = tokenSelector(getState())
-      let res = await usersApi.updateUser(user, token)
-      dispatch(updateUserSuccess(res))
+      if (token) {
+        let res = await usersApi.updateUser(user, token)
+        dispatch(updateUserSuccess(res))
+      }
     } catch (e) {
       dispatch(updateUserFailure(defaultErrMsg(e)))
     }

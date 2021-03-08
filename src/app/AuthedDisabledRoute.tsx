@@ -1,12 +1,12 @@
 import { Route, RouteProps, Redirect } from 'wouter'
 interface AuthedDisabledRouteProps extends RouteProps {
-  isAuth: boolean
+  authed: boolean
 }
 export default function AuthedDisabledRoute({
-  isAuth,
+  authed,
   ...props
 }: AuthedDisabledRouteProps) {
-  if (!isAuth) {
+  if (!authed) {
     return <Route {...props} />
   } else {
     return <Redirect to={'/'} />

@@ -9,7 +9,7 @@ function useGetProfile() {
   )
 
   useEffect(() => {
-    if (username !== '') {
+    if (username) {
       dispatch(getProfile(username))
     }
   }, [username])

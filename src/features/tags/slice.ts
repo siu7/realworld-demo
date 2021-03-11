@@ -1,47 +1,36 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AppThunk } from 'app/store'
-import type { TagsResponse } from 'api/tags'
-import { tagsApi } from 'api/tags'
-import { defaultErrMsg } from 'api/config'
+import { tags } from 'api/api'
 
 interface TagsState {
-  tags: [string] | []
-  getTagsLoading: boolean
+  tags?: string[]
 }
 
-const initialState: TagsState = {
-  tags: [],
-  getTagsLoading: false,
-}
+const initialState: TagsState = {}
 const tagsSlice = createSlice({
   name: 'tags',
   initialState,
   reducers: {
-    getTagsRequest(state) {
-      state.getTagsLoading = true
+    listReq() {},
+    listOk(state, action: PayloadAction<string[]>) {
+      state.tags = action.payload
     },
-    getTagsSuccess(state, action: PayloadAction<TagsResponse>) {
-      state.tags = action.payload.tags
-      state.getTagsLoading = false
-    },
-    getTagsFailure(state, _action: PayloadAction<string>) {
-      state.getTagsLoading = false
-    },
+    listErr(_, _e) {},
   },
 })
 
-const { getTagsRequest, getTagsSuccess, getTagsFailure } = tagsSlice.actions
+const { listReq, listOk, listErr } = tagsSlice.actions
 export default tagsSlice.reducer
 
-const getTags = (): AppThunk =>
+const list = (): AppThunk =>
   async function (dispatch) {
-    dispatch(getTagsRequest())
+    dispatch(listReq())
     try {
-      let res = await tagsApi.getTags()
-      dispatch(getTagsSuccess(res))
+      let res = await tags.list()
+      dispatch(listOk(res.tags))
     } catch (e) {
-      dispatch(getTagsFailure(defaultErrMsg(e)))
+      dispatch(listErr(e))
     }
   }
 
-export { getTags }
+export const tagsThunk = { list }

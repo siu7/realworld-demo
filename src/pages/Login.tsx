@@ -1,27 +1,16 @@
-import { useState, useEffect } from 'react'
-import { useLogin } from 'features/user/hooks'
 import { useForm } from 'utils/useForm'
-import type { LoginRequestBody } from 'api/users'
+import type { LoginBody } from 'api/api'
 
 export default function Login() {
-  const [didLoad, setDidLoad] = useState(false)
-  const { loginLoading, login, error, resetError } = useLogin()
-  useEffect(() => {
-    if (!didLoad) {
-      resetError()
-      setDidLoad(true)
-    }
-  }, [didLoad, resetError])
-
   const { formData, handleInputChange, handleSubmit } = useForm<
-    LoginRequestBody['user']
+    LoginBody['user']
   >(
     {
       email: '',
       password: '',
     },
     () =>
-      login({
+      console.log({
         user: formData,
       })
   )
@@ -44,8 +33,6 @@ export default function Login() {
         onChange={handleInputChange}
       />
       <button type="submit">Login</button>
-      {loginLoading && <label>Loading</label>}
-      {error && <label>{error}</label>}
     </form>
   )
 }

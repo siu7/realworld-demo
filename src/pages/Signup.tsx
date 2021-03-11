@@ -1,20 +1,9 @@
-import { useState, useEffect } from 'react'
-import { useSignup } from 'features/user/hooks'
 import { useForm } from 'utils/useForm'
-import type { SignupRequestBody } from 'api/users'
+import type { SignupBody } from 'api/api'
 
 export default function Signup() {
-  const [didLoad, setDidLoad] = useState(false)
-  const { signupLoading, signup, error, resetError } = useSignup()
-  useEffect(() => {
-    if (!didLoad) {
-      resetError()
-      setDidLoad(true)
-    }
-  }, [didLoad, resetError])
-
   const { formData, handleInputChange, handleSubmit } = useForm<
-    SignupRequestBody['user']
+    SignupBody['user']
   >(
     {
       username: '',
@@ -22,7 +11,7 @@ export default function Signup() {
       password: '',
     },
     () =>
-      signup({
+      console.log({
         user: formData,
       })
   )
@@ -51,8 +40,6 @@ export default function Signup() {
         onChange={handleInputChange}
       />
       <button type="submit">Signup</button>
-      {signupLoading && <label>Loading</label>}
-      {error && <label>{error}</label>}
     </form>
   )
 }

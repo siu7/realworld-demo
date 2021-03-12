@@ -1,9 +1,11 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit'
 import tags from 'features/tags/slice'
+import login from 'features/user/slice'
 
 export const store = configureStore({
   reducer: {
     tags,
+    user: login,
   },
 })
 

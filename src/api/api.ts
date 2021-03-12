@@ -1,14 +1,21 @@
-import wretch from 'wretch'
+import wretch, { WretcherError } from 'wretch'
 
-let base = wretch()
-  .url('https://conduit.productionready.io/api')
-  .catcher('error', (e) => ({
-    error: e.response
-      ? e.text
-        ? e.text.replace(/\\/g, '')
-        : `${e.response.status} ${e.response.statusText}`
-      : e.toString(),
-  }))
+function isJSON(str: string | undefined) {
+  try {
+    if (str) return JSON.parse(str) && !!str
+  } catch (e) {
+    return false
+  }
+}
+
+export const errorMsg = (e: WretcherError) =>
+  e.response
+    ? e.text && isJSON(e.text)
+      ? e.text.replace(/\\/g, '')
+      : `${e.response.status} ${e.response.statusText}`
+    : e.toString()
+let base = wretch().url('https://conduit.productionready.io/api')
+
 let token: string | null = localStorage.getItem('@token')
 if (token) base.auth(`Token ${token}`)
 
@@ -27,22 +34,22 @@ export type Article = {
 export type ArticleResponse = {
   article: Article
 }
-export type MultiArticlesResponse = {
+export type ArticlesResponse = {
   articles: [Article]
   articlesCount: number
 }
-export type ListArticlesParams = {
+export type CommonGetArticlesParams = {
+  limit?: number
+  offset?: number
+}
+export type GetArticlesFilters = {
   tag?: string
   author?: string
   favorited?: string
-  limit?: number
-  offset?: number
 }
-export type FeedArticlesParams = {
-  limit?: number
-  offset?: number
-}
-export type PostArticleBody = {
+export type GetArticlesParams = CommonGetArticlesParams & GetArticlesFilters
+export type GetFeedArticlesParams = CommonGetArticlesParams
+export type CreateArticleBody = {
   article: {
     title: string
     description: string
@@ -50,7 +57,7 @@ export type PostArticleBody = {
     tagList: string[]
   }
 }
-export type PutArticleBody = {
+export type UpdateArticleBody = {
   article: {
     title?: string
     description?: string
@@ -59,21 +66,23 @@ export type PutArticleBody = {
 }
 let api = base.url('/articles')
 export const articles = {
-  list: async (params: ListArticlesParams): Promise<MultiArticlesResponse> =>
+  get: async (params: GetArticlesParams): Promise<ArticlesResponse> =>
     await api.query(params).get().json(),
-  get: async (slug: string): Promise<ArticleResponse> =>
+  getOne: async (slug: string): Promise<ArticleResponse> =>
     await api.url(`/${slug}`).get().json(),
-  post: async (body: PostArticleBody): Promise<ArticleResponse> =>
+  create: async (body: CreateArticleBody): Promise<ArticleResponse> =>
     await api.post(body).json(),
-  put: async (slug: string, body: PutArticleBody): Promise<ArticleResponse> =>
-    await api.url(`/${slug}`).put(body).json(),
-  del: async (slug: string): Promise<any> =>
+  update: async (
+    slug: string,
+    body: UpdateArticleBody
+  ): Promise<ArticleResponse> => await api.url(`/${slug}`).put(body).json(),
+  delete: async (slug: string): Promise<any> =>
     await api.url(`/${slug}`).delete().json(),
-  feed: async (params: FeedArticlesParams): Promise<MultiArticlesResponse> =>
+  getFeeds: async (params: GetFeedArticlesParams): Promise<ArticlesResponse> =>
     await api.url('/feed').query(params).get().json(),
-  fav: async (slug: string): Promise<ArticleResponse> =>
+  favorite: async (slug: string): Promise<ArticleResponse> =>
     await api.url(`/${slug}/favorite`).post().json(),
-  unfav: async (slug: string): Promise<ArticleResponse> =>
+  unfavorite: async (slug: string): Promise<ArticleResponse> =>
     await api.url(`/${slug}/favorite`).delete().json(),
 }
 
@@ -84,7 +93,7 @@ export type Comment = {
   body: string
   author: Profile
 }
-export type PostCommentBody = {
+export type CreateCommentBody = {
   comment: {
     body: string
   }
@@ -92,15 +101,18 @@ export type PostCommentBody = {
 export type CommentResponse = {
   comment: Comment
 }
-export type MultiCommentsResponse = {
+export type CommentsResponse = {
   comments: Comment[]
 }
 export const comments = {
-  list: async (slug: string): Promise<MultiCommentsResponse> =>
+  get: async (slug: string): Promise<CommentsResponse> =>
     await api.url(`/${slug}/comments`).get().json(),
-  post: async (slug: string, body: PostCommentBody): Promise<CommentResponse> =>
+  create: async (
+    slug: string,
+    body: CreateCommentBody
+  ): Promise<CommentResponse> =>
     await api.url(`/${slug}/comments`).post(body).json(),
-  del: async (slug: string, id: number): Promise<any> =>
+  delete: async (slug: string, id: number): Promise<any> =>
     await api.url(`/${slug}/comments/${id}`).delete().json(),
 }
 
@@ -115,7 +127,7 @@ export type ProfileResponse = {
   profile: Profile
 }
 export const profiles = {
-  get: async (username: string): Promise<ProfileResponse> =>
+  getOne: async (username: string): Promise<ProfileResponse> =>
     await api.url(`/${username}`).get().json(),
   follow: async (username: string): Promise<ProfileResponse> =>
     await api.url(`/${username}`).post().json(),
@@ -123,7 +135,7 @@ export const profiles = {
     await api.url(`/${username}`).delete().json(),
 }
 
-api = base.url('/users')
+let usersApi = base.url('/users')
 export type User = {
   email: string
   token: string
@@ -131,7 +143,7 @@ export type User = {
   bio: string
   image: string | null
 }
-type UserResponse = {
+export type UserResponse = {
   user: User
 }
 export type LoginBody = {
@@ -147,7 +159,7 @@ export type SignupBody = {
     password: string
   }
 }
-export type PutUserBody = {
+export type UpdateUserBody = {
   user: {
     username?: string
     email?: string
@@ -158,18 +170,18 @@ export type PutUserBody = {
 }
 export const users = {
   login: async (body: LoginBody): Promise<UserResponse> =>
-    await api.url('/login').post(body).json(),
+    await usersApi.url('/login').post(body).json(),
   signup: async (body: SignupBody): Promise<UserResponse> =>
-    await api.post(body).json(),
-  get: async (): Promise<UserResponse> => await api.get().json(),
-  put: async (body: PutUserBody): Promise<UserResponse> =>
-    await api.put(body).json(),
+    await usersApi.post(body).json(),
+  getCurrent: async (): Promise<UserResponse> => await api.get().json(),
+  update: async (body: UpdateUserBody): Promise<UserResponse> =>
+    await usersApi.put(body).json(),
 }
 
-api = base.url('/tags')
+let tagsApi = base.url('/tags')
 export type TagsResponse = {
   tags: string[]
 }
 export const tags = {
-  list: async (): Promise<TagsResponse> => await api.get().json(),
+  get: async (): Promise<TagsResponse> => await tagsApi.get().json(),
 }

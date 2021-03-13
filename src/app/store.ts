@@ -1,11 +1,17 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit'
-import tags from 'features/tags/slice'
-import login from 'features/user/slice'
+import { articlesReducer } from 'features/articles/slice'
+import { userReducer } from 'features/user/slice'
+import { tagsReducer } from 'features/tags/slice'
+import { commentsReducer } from 'features/comments/slice'
+import { profileReducer } from 'features/profile/slice'
 
 export const store = configureStore({
   reducer: {
-    tags,
-    user: login,
+    articles: articlesReducer,
+    user: userReducer,
+    tags: tagsReducer,
+    comments: commentsReducer,
+    profile: profileReducer,
   },
 })
 

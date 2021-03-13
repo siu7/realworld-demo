@@ -1,12 +1,28 @@
+import { createSlice, combineReducers } from '@reduxjs/toolkit'
 import { tags } from 'api/api'
-import type { TagsResponse } from 'api/api'
-import { createApiAsyncThunkSlice } from 'app/utils'
+import { createAsyncThunkReducer } from 'app/utils'
+import type { AsyncReturnType } from 'app/utils'
 
-const getTagsSlice = createApiAsyncThunkSlice<TagsResponse>({
-  name: 'tags/getTags',
-  api: tags.get,
-  initialState: {},
-  reducers: undefined,
+const {
+  asyncThunk: getMany,
+  reducer: getManyReducer,
+} = createAsyncThunkReducer<AsyncReturnType<typeof tags.getMany>>(
+  'tags/getMany',
+  tags.getMany
+)
+
+const tagsSlice = createSlice({
+  name: 'tags',
+  initialState: { tags: [] } as { tags: string[] },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(getMany.fulfilled, (state, action) => {
+      state.tags = action.payload.tags
+    })
+  },
 })
-export default getTagsSlice.slice.reducer
-export const getTags = getTagsSlice.asyncThunk
+export const tagsReducer = combineReducers({
+  data: tagsSlice.reducer,
+  getMany: getManyReducer,
+})
+export { getMany }

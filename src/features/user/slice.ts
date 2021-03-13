@@ -1,61 +1,63 @@
+import { createSlice, combineReducers } from '@reduxjs/toolkit'
 import { users } from 'api/api'
-import type { LoginBody, UserResponse } from 'api/api'
-import { createApiAsyncThunkSlice } from 'app/utils'
+import type { User } from 'api/api'
+import { createAsyncThunkReducer } from 'app/utils'
+import type { AsyncReturnType } from 'app/utils'
 
-const loginSlice = createApiAsyncThunkSlice<UserResponse, LoginBody>({
-  name: 'user/login',
-  initialState: {},
-  api: users.login,
-  reducers: undefined,
+const { asyncThunk: login, reducer: loginReducer } = createAsyncThunkReducer<
+  AsyncReturnType<typeof users.login>,
+  Parameters<typeof users.login>[0]
+>('user/login', users.login)
+
+const { asyncThunk: signup, reducer: signupReducer } = createAsyncThunkReducer<
+  AsyncReturnType<typeof users.signup>,
+  Parameters<typeof users.signup>[0]
+>('user/signup', users.signup)
+
+const {
+  asyncThunk: updateOne,
+  reducer: updateOneReducer,
+} = createAsyncThunkReducer<
+  AsyncReturnType<typeof users.updateOne>,
+  Parameters<typeof users.updateOne>[0]
+>('user/updateOne', users.updateOne)
+
+const {
+  asyncThunk: getCurrent,
+  reducer: getCurrentReducer,
+} = createAsyncThunkReducer<AsyncReturnType<typeof users.getCurrent>>(
+  'user/getCurrent',
+  users.getCurrent
+)
+
+interface InitialState {
+  user: User
+}
+const initialState: InitialState = {
+  user: {} as User,
+}
+const userSlice = createSlice({
+  name: 'User',
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(login.fulfilled, (state, action) => {
+      state.user = action.payload.user
+    })
+    builder.addCase(signup.fulfilled, (state, action) => {
+      state.user = action.payload.user
+    })
+    builder.addCase(getCurrent.fulfilled, (state, action) => {
+      state.user = action.payload.user
+    })
+  },
 })
-export default loginSlice.slice.reducer
-export const login = loginSlice.asyncThunk
+export const userReducer = combineReducers({
+  data: userSlice.reducer,
+  login: loginReducer,
+  signup: signupReducer,
+  updateOne: updateOneReducer,
+  getCurrent: getCurrentReducer,
+})
 
-//interface Login {
-//data?: UserResponse
-//error?: string
-//loading: boolean
-//}
-
-//const loginSlice = createSlice({
-//name: 'login',
-//initialState: { loading: false } as Login,
-//reducers: {
-//loginPending(state) {
-//state.loading = true
-//},
-//loginFullfiled(state, { payload }) {
-//state.data = payload
-//state.loading = false
-//},
-//loginRejected(state, { payload }) {
-//state.error = payload
-//state.loading = false
-//},
-//},
-//})
-
-//const { loginPending, loginFullfiled, loginRejected } = loginSlice.actions
-//export default loginSlice.reducer
-//export const login = (body: LoginBody): AppThunk =>
-//async function (dispatch) {
-//try {
-//dispatch(loginPending())
-//const result = await users.login(body)
-//dispatch(loginFullfiled(result))
-//} catch (e) {
-//dispatch(loginRejected(errorMsg(e)))
-//}
-//}
-
-//const loginSliceThunk = createGenericSliceThunk({
-//name: 'user/login',
-//api: users.login,
-//reducers: {},
-//initialState: {} as GenericState<UserResponse>,
-//})
-//console.log(loginSliceThunk)
-//export const loginTestReducer = loginSliceThunk.slice.reducer
-//export const loginTest = loginSliceThunk.thunk
-
-////console.log(loginTest)
+export { login, signup, updateOne, getCurrent }

@@ -7,11 +7,27 @@ function isJSON(str: string | undefined) {
     return false
   }
 }
+interface ErrorResponse {
+  errors: {
+    [key: string]: string[]
+  }
+}
+function parseErrorDataToString(errorResponse: ErrorResponse) {
+  let msg = ''
+  let errors = errorResponse.errors
+  for (const key in errors) {
+    msg += key + ' '
+    for (const error of errors[key]) {
+      msg += error + ' '
+    }
+  }
+  return msg
+}
 
 export const errorMsg = (e: WretcherError) =>
   e.response
     ? e.text && isJSON(e.text)
-      ? e.text.replace(/\\/g, '')
+      ? parseErrorDataToString(JSON.parse(e.text))
       : `${e.response.status} ${e.response.statusText}`
     : e.toString()
 let base = wretch().url('https://conduit.productionready.io/api')
@@ -64,26 +80,37 @@ export type UpdateArticleBody = {
     body?: string
   }
 }
-let api = base.url('/articles')
+let articleApi = base.url('/articles')
 export const articles = {
-  get: async (params: GetArticlesParams): Promise<ArticlesResponse> =>
-    await api.query(params).get().json(),
+  getMany: async (params: GetArticlesParams): Promise<ArticlesResponse> =>
+    await articleApi.query(params).get().json(),
+
   getOne: async (slug: string): Promise<ArticleResponse> =>
-    await api.url(`/${slug}`).get().json(),
-  create: async (body: CreateArticleBody): Promise<ArticleResponse> =>
-    await api.post(body).json(),
-  update: async (
-    slug: string,
+    await articleApi.url(`/${slug}`).get().json(),
+
+  createOne: async (body: CreateArticleBody): Promise<ArticleResponse> =>
+    await articleApi.post(body).json(),
+
+  updateOne: async ({
+    slug,
+    body,
+  }: {
+    slug: string
     body: UpdateArticleBody
-  ): Promise<ArticleResponse> => await api.url(`/${slug}`).put(body).json(),
-  delete: async (slug: string): Promise<any> =>
-    await api.url(`/${slug}`).delete().json(),
+  }): Promise<ArticleResponse> =>
+    await articleApi.url(`/${slug}`).put(body).json(),
+
+  deleteOne: async (slug: string): Promise<any> =>
+    await articleApi.url(`/${slug}`).delete().json(),
+
   getFeeds: async (params: GetFeedArticlesParams): Promise<ArticlesResponse> =>
-    await api.url('/feed').query(params).get().json(),
-  favorite: async (slug: string): Promise<ArticleResponse> =>
-    await api.url(`/${slug}/favorite`).post().json(),
-  unfavorite: async (slug: string): Promise<ArticleResponse> =>
-    await api.url(`/${slug}/favorite`).delete().json(),
+    await articleApi.url('/feed').query(params).get().json(),
+
+  favoriteOne: async (slug: string): Promise<ArticleResponse> =>
+    await articleApi.url(`/${slug}/favorite`).post().json(),
+
+  unfavoriteOne: async (slug: string): Promise<ArticleResponse> =>
+    await articleApi.url(`/${slug}/favorite`).delete().json(),
 }
 
 export type Comment = {
@@ -105,18 +132,23 @@ export type CommentsResponse = {
   comments: Comment[]
 }
 export const comments = {
-  get: async (slug: string): Promise<CommentsResponse> =>
-    await api.url(`/${slug}/comments`).get().json(),
-  create: async (
-    slug: string,
+  getMany: async (slug: string): Promise<CommentsResponse> =>
+    await articleApi.url(`/${slug}/comments`).get().json(),
+
+  createOne: async ({
+    slug,
+    body,
+  }: {
+    slug: string
     body: CreateCommentBody
-  ): Promise<CommentResponse> =>
-    await api.url(`/${slug}/comments`).post(body).json(),
-  delete: async (slug: string, id: number): Promise<any> =>
-    await api.url(`/${slug}/comments/${id}`).delete().json(),
+  }): Promise<CommentResponse> =>
+    await articleApi.url(`/${slug}/comments`).post(body).json(),
+
+  deleteOne: async ({ slug, id }: { slug: string; id: number }): Promise<any> =>
+    await articleApi.url(`/${slug}/comments/${id}`).delete().json(),
 }
 
-api = base.url('/profiles')
+let profileApi = base.url('/profiles')
 export type Profile = {
   username: string
   bio: string
@@ -128,11 +160,11 @@ export type ProfileResponse = {
 }
 export const profiles = {
   getOne: async (username: string): Promise<ProfileResponse> =>
-    await api.url(`/${username}`).get().json(),
-  follow: async (username: string): Promise<ProfileResponse> =>
-    await api.url(`/${username}`).post().json(),
-  unfollow: async (username: string): Promise<ProfileResponse> =>
-    await api.url(`/${username}`).delete().json(),
+    await profileApi.url(`/${username}`).get().json(),
+  followOne: async (username: string): Promise<ProfileResponse> =>
+    await profileApi.url(`/${username}`).post().json(),
+  unfollowOne: async (username: string): Promise<ProfileResponse> =>
+    await profileApi.url(`/${username}`).delete().json(),
 }
 
 let usersApi = base.url('/users')
@@ -173,8 +205,8 @@ export const users = {
     await usersApi.url('/login').post(body).json(),
   signup: async (body: SignupBody): Promise<UserResponse> =>
     await usersApi.post(body).json(),
-  getCurrent: async (): Promise<UserResponse> => await api.get().json(),
-  update: async (body: UpdateUserBody): Promise<UserResponse> =>
+  getCurrent: async (): Promise<UserResponse> => await usersApi.get().json(),
+  updateOne: async (body: UpdateUserBody): Promise<UserResponse> =>
     await usersApi.put(body).json(),
 }
 
@@ -183,5 +215,5 @@ export type TagsResponse = {
   tags: string[]
 }
 export const tags = {
-  get: async (): Promise<TagsResponse> => await tagsApi.get().json(),
+  getMany: async (): Promise<TagsResponse> => await tagsApi.get().json(),
 }

@@ -1,69 +1,38 @@
 import { createSlice, combineReducers } from '@reduxjs/toolkit'
+import type { PayloadAction } from '@reduxjs/toolkit'
 import { articles } from 'api/api'
 import type { Article, GetArticlesFilters } from 'api/api'
-import { createAsyncThunkReducer } from 'app/utils'
-import type { AsyncReturnType } from 'app/utils'
+import { createApiAsyncThunk, createExtraReducer } from 'app/utils'
 
-const {
-  asyncThunk: getMany,
-  reducer: getManyReducer,
-} = createAsyncThunkReducer<
-  AsyncReturnType<typeof articles.getMany>,
-  Parameters<typeof articles.getMany>[0]
->('articles/getMany', articles.getMany)
+const getMany = createApiAsyncThunk(articles.getMany, 'articles/getMany')
+const getManyReducer = createExtraReducer(getMany)
 
-const { asyncThunk: getOne, reducer: getOneReducer } = createAsyncThunkReducer<
-  AsyncReturnType<typeof articles.getOne>,
-  Parameters<typeof articles.getOne>[0]
->('articles/getOne', articles.getOne)
+const getOne = createApiAsyncThunk(articles.getOne, 'articles/getOne')
+const getOneReducer = createExtraReducer(getOne)
 
-const {
-  asyncThunk: createOne,
-  reducer: createOneReducer,
-} = createAsyncThunkReducer<
-  AsyncReturnType<typeof articles.createOne>,
-  Parameters<typeof articles.createOne>[0]
->('articles/createOne', articles.createOne)
+const createOne = createApiAsyncThunk(articles.createOne, 'articles/createOne')
+const createOneReducer = createExtraReducer(createOne)
 
-const {
-  asyncThunk: updateOne,
-  reducer: updateOneReducer,
-} = createAsyncThunkReducer<
-  AsyncReturnType<typeof articles.updateOne>,
-  Parameters<typeof articles.updateOne>[0]
->('articles/updateOne', articles.updateOne)
+const updateOne = createApiAsyncThunk(articles.updateOne, 'articles/updateOne')
+const updateOneReducer = createExtraReducer(updateOne)
 
-const {
-  asyncThunk: deleteOne,
-  reducer: deleteOneReducer,
-} = createAsyncThunkReducer<
-  AsyncReturnType<typeof articles.deleteOne>,
-  Parameters<typeof articles.deleteOne>[0]
->('articles/deleteOne', articles.deleteOne)
+const deleteOne = createApiAsyncThunk(articles.deleteOne, 'articles/deleteOne')
+const deleteOneReducer = createExtraReducer(deleteOne)
 
-const {
-  asyncThunk: getFeeds,
-  reducer: getFeedsReducer,
-} = createAsyncThunkReducer<
-  AsyncReturnType<typeof articles.getFeeds>,
-  Parameters<typeof articles.getFeeds>[0]
->('articles/getFeeds', articles.getFeeds)
+const getFeeds = createApiAsyncThunk(articles.getFeeds, 'articles/getFeeds')
+const getFeedsReducer = createExtraReducer(getFeeds)
 
-const {
-  asyncThunk: favoriteOne,
-  reducer: favoriteOneReducer,
-} = createAsyncThunkReducer<
-  AsyncReturnType<typeof articles.favoriteOne>,
-  Parameters<typeof articles.favoriteOne>[0]
->('articles/favoriteOne', articles.favoriteOne)
+const favoriteOne = createApiAsyncThunk(
+  articles.favoriteOne,
+  'articles/favoriteOne'
+)
+const favoriteOneReducer = createExtraReducer(favoriteOne)
 
-const {
-  asyncThunk: unfavoriteOne,
-  reducer: unfavoriteOneReducer,
-} = createAsyncThunkReducer<
-  AsyncReturnType<typeof articles.unfavoriteOne>,
-  Parameters<typeof articles.unfavoriteOne>[0]
->('articles/unfavoriteOne', articles.unfavoriteOne)
+const unfavoriteOne = createApiAsyncThunk(
+  articles.unfavoriteOne,
+  'articles/unfavoriteOne'
+)
+const unfavoriteOneReducer = createExtraReducer(unfavoriteOne)
 
 interface InitialState {
   articles: Article[]
@@ -73,8 +42,8 @@ interface InitialState {
   slug: string | null
   feeds: Article[]
   feedsCount?: number
-  offset: 0
-  limit: 20
+  offset: number
+  limit: number
 }
 const initialState: InitialState = {
   articles: [],
@@ -82,35 +51,46 @@ const initialState: InitialState = {
   slug: null,
   feeds: [],
   offset: 0,
-  limit: 20,
+  limit: 10,
 }
+
 const articlesSlice = createSlice({
   name: 'articles',
   initialState,
-  reducers: {},
+  reducers: {
+    setTag(state, { payload }: PayloadAction<string>) {
+      state.getArticlesFilter.tag = payload
+    },
+    setAuthor(state, { payload }: PayloadAction<string>) {
+      state.getArticlesFilter.author = payload
+    },
+    setFavorited(state, { payload }: PayloadAction<string>) {
+      state.getArticlesFilter.favorited = payload
+    },
+  },
   extraReducers: (builder) => {
-    builder.addCase(getMany.fulfilled, (state, action) => {
-      state.articles = action.payload.articles
-      state.articlesCount = action.payload.articlesCount
+    builder.addCase(getMany.fulfilled, (state, { payload }) => {
+      state.articles = payload.articles
+      state.articlesCount = { payload }.payload.articlesCount
     })
-    builder.addCase(getOne.fulfilled, (state, action) => {
-      state.article = action.payload.article
+    builder.addCase(getOne.fulfilled, (state, { payload }) => {
+      state.article = payload.article
     })
-    builder.addCase(createOne.fulfilled, (state, action) => {
-      state.article = action.payload.article
+    builder.addCase(createOne.fulfilled, (state, { payload }) => {
+      state.article = payload.article
     })
-    builder.addCase(updateOne.fulfilled, (state, action) => {
-      state.article = action.payload.article
+    builder.addCase(updateOne.fulfilled, (state, { payload }) => {
+      state.article = payload.article
     })
-    builder.addCase(getFeeds.fulfilled, (state, action) => {
-      state.feeds = action.payload.articles
-      state.feedsCount = action.payload.articlesCount
+    builder.addCase(getFeeds.fulfilled, (state, { payload }) => {
+      state.feeds = payload.articles
+      state.feedsCount = payload.articlesCount
     })
-    builder.addCase(favoriteOne.fulfilled, (state, action) => {
-      state.article = action.payload.article
+    builder.addCase(favoriteOne.fulfilled, (state, { payload }) => {
+      state.article = payload.article
     })
-    builder.addCase(unfavoriteOne.fulfilled, (state, action) => {
-      state.article = action.payload.article
+    builder.addCase(unfavoriteOne.fulfilled, (state, { payload }) => {
+      state.article = payload.article
     })
   },
 })
@@ -135,3 +115,4 @@ export {
   favoriteOne,
   unfavoriteOne,
 }
+export const { setTag, setAuthor, setFavorited } = articlesSlice.actions

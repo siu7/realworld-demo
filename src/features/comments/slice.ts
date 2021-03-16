@@ -1,43 +1,27 @@
 import { createSlice, combineReducers } from '@reduxjs/toolkit'
 import { comments } from 'api/api'
 import type { Comment } from 'api/api'
-import { createAsyncThunkReducer } from 'app/utils'
-import type { AsyncReturnType } from 'app/utils'
+import { createApiAsyncThunk, createExtraReducer } from 'app/utils'
 
-const {
-  asyncThunk: getMany,
-  reducer: getManyReducer,
-} = createAsyncThunkReducer<
-  AsyncReturnType<typeof comments.getMany>,
-  Parameters<typeof comments.getMany>[0]
->('comments/getMany', comments.getMany)
+const getMany = createApiAsyncThunk(comments.getMany, 'comments/getMany')
+const getManyReducer = createExtraReducer(getMany)
 
-const {
-  asyncThunk: createOne,
-  reducer: createOneReducer,
-} = createAsyncThunkReducer<
-  AsyncReturnType<typeof comments.createOne>,
-  Parameters<typeof comments.createOne>[0]
->('comments/createOne', comments.createOne)
+const createOne = createApiAsyncThunk(comments.createOne, 'comments/createOne')
+const createOneReducer = createExtraReducer(createOne)
 
-const {
-  asyncThunk: deleteOne,
-  reducer: deleteOneReducer,
-} = createAsyncThunkReducer<
-  AsyncReturnType<typeof comments.deleteOne>,
-  Parameters<typeof comments.deleteOne>[0]
->('comments/deleteOne', comments.deleteOne)
+const deleteOne = createApiAsyncThunk(comments.deleteOne, 'comments/deleteOne')
+const deleteOneReducer = createExtraReducer(deleteOne)
 
 const commentsSlice = createSlice({
   name: 'comments',
   initialState: { comments: [] } as { comments: Comment[] },
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getMany.fulfilled, (state, action) => {
-      state.comments = action.payload.comments
+    builder.addCase(getMany.fulfilled, (state, { payload }) => {
+      state.comments = payload.comments
     })
-    builder.addCase(createOne.fulfilled, (state, action) => {
-      state.comments.push(action.payload.comment)
+    builder.addCase(createOne.fulfilled, (state, { payload }) => {
+      state.comments.push(payload.comment)
     })
   },
 })

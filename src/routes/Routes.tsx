@@ -13,8 +13,8 @@ import ProtectedRoute from 'routes/ProtectedRoute'
 import AuthedDisabledRoute from 'routes/AuthedDisabledRoute'
 
 export function Routes() {
-  //const { authed } = useAppSelector((state) => state.user)
-  const authed = false
+  const { user } = useAppSelector((state) => state.user.data)
+  const authed = user.token ? true : false
 
   return (
     <Switch>

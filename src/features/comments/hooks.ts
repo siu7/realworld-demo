@@ -7,7 +7,7 @@ const commentsSelector = (state: RootState) => state.comments.data
 
 export function useGetComments() {
   const dispatch = useAppDispatch()
-  const { loading, error } = useAppSelector((state) => state.comments.getMany)
+  const { loading, errors } = useAppSelector((state) => state.comments.getMany)
   const { comments } = useAppSelector(commentsSelector)
   const { slug } = useAppSelector((state) => state.articles.data)
   useEffect(() => {
@@ -16,26 +16,30 @@ export function useGetComments() {
   return {
     comments,
     loading,
-    error,
+    errors,
   }
 }
 export function useCreateComment() {
   const dispatch = useAppDispatch()
-  const { loading, error } = useAppSelector((state) => state.comments.createOne)
+  const { loading, errors } = useAppSelector(
+    (state) => state.comments.createOne
+  )
   return {
     createComment: (params: Parameters<typeof createOne>[0]) =>
       dispatch(createOne(params)),
     loading,
-    error,
+    errors,
   }
 }
 export function useDeleteComment() {
   const dispatch = useAppDispatch()
-  const { loading, error } = useAppSelector((state) => state.comments.deleteOne)
+  const { loading, errors } = useAppSelector(
+    (state) => state.comments.deleteOne
+  )
   return {
     deleteOne: (params: Parameters<typeof deleteOne>[0]) =>
       dispatch(deleteOne(params)),
     loading,
-    error,
+    errors,
   }
 }

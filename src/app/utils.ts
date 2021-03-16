@@ -1,45 +1,22 @@
-import { createSlice, createAsyncThunk, createReducer } from '@reduxjs/toolkit'
-import type {
-  SliceCaseReducers,
-  ValidateSliceCaseReducers,
-} from '@reduxjs/toolkit'
-import { errorMsg } from 'api/api'
-
-export type AsyncReturnType<
-  T extends (...args: any) => Promise<any>
-> = T extends (...args: any) => Promise<infer R> ? R : any
-
-export interface GenericState<T> {
-  loading?: boolean
-  data?: T
-  error?: string
-}
-
-export const createApiAsyncThunk = <Returned, Args = void>(
-  name: string,
-  api: (...args: any[]) => Promise<Returned>
-) =>
-  createAsyncThunk<Returned, Args, {}>(
-    name,
-    async (params: Args, { rejectWithValue }) => {
-      try {
-        return params !== null ? await api(params) : await api()
-      } catch (e) {
-        return rejectWithValue(errorMsg(e))
-      }
-    }
-  )
+import type { AsyncThunk } from '@reduxjs/toolkit'
+import { createAsyncThunk, createReducer } from '@reduxjs/toolkit'
+import { handleError } from 'api/api'
 
 interface DefaultAppThunkState {
   loading?: boolean
-  error?: string
+  errors: { [key: string]: string[] }
 }
-export const createAsyncThunkReducer = <Returned, Args = void>(
-  name: string,
-  api: (...args: any[]) => Promise<Returned>
-) => {
-  const asyncThunk = createApiAsyncThunk<Returned, Args>(name, api)
-  const reducer = createReducer({} as DefaultAppThunkState, (builder) => {
+
+export const createExtraReducer = <Returned, ThunkArg, ThunkApiConfig>(
+  asyncThunk: AsyncThunk<
+    Returned,
+    ThunkArg,
+    {
+      rejectValue: { [key: string]: string[] }
+    } & ThunkApiConfig
+  >
+) =>
+  createReducer({} as DefaultAppThunkState, (builder) => {
     builder.addCase(asyncThunk.pending, (state) => {
       state.loading = true
     })
@@ -47,12 +24,39 @@ export const createAsyncThunkReducer = <Returned, Args = void>(
       delete state.loading
     })
     builder.addCase(asyncThunk.rejected, (state, { payload }) => {
-      if (typeof payload === 'string') state.error = payload
+      if (payload) state.errors = payload
       delete state.loading
     })
   })
-  return {
-    asyncThunk,
-    reducer,
-  }
-}
+
+export const createApiAsyncThunk = <Returned, ThunkArg>(
+  api: (...params: ThunkArg[]) => Promise<Returned>,
+  name: string
+) =>
+  createAsyncThunk<
+    Returned,
+    ThunkArg,
+    { rejectValue: { [key: string]: string[] } }
+  >(name, async (params: ThunkArg, { rejectWithValue }) => {
+    try {
+      return await api(params)
+    } catch (e) {
+      return rejectWithValue(handleError(e))
+    }
+  })
+
+export const createApiAsyncThunkWithNoArg = <Returned>(
+  api: () => Promise<Returned>,
+  name: string
+) =>
+  createAsyncThunk<
+    Returned,
+    void,
+    { rejectValue: { [key: string]: string[] } }
+  >(name, async (_, { rejectWithValue }) => {
+    try {
+      return await api()
+    } catch (e) {
+      return rejectWithValue(handleError(e))
+    }
+  })

@@ -7,7 +7,7 @@ const profileSelector = (state: RootState) => state.profile.data
 
 export function useGetProfile() {
   const dispatch = useAppDispatch()
-  const { loading, error } = useAppSelector((state) => state.profile.getOne)
+  const { loading, errors } = useAppSelector((state) => state.profile.getOne)
   const { profile, username } = useAppSelector(profileSelector)
   useEffect(() => {
     if (username) dispatch(getOne(username))
@@ -15,28 +15,28 @@ export function useGetProfile() {
   return {
     profile,
     loading,
-    error,
+    errors,
   }
 }
 export function useFollowOne() {
   const dispatch = useAppDispatch()
-  const { loading, error } = useAppSelector((state) => state.profile.followOne)
+  const { loading, errors } = useAppSelector((state) => state.profile.followOne)
   return {
     followUser: (params: Parameters<typeof followOne>[0]) =>
       dispatch(followOne(params)),
     loading,
-    error,
+    errors,
   }
 }
 export function useUnfollowOne() {
   const dispatch = useAppDispatch()
-  const { loading, error } = useAppSelector(
+  const { loading, errors } = useAppSelector(
     (state) => state.profile.unfollowOne
   )
   return {
     unfollowUser: (params: Parameters<typeof unfollowOne>[0]) =>
       dispatch(unfollowOne(params)),
     loading,
-    error,
+    errors,
   }
 }

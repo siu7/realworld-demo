@@ -1,54 +1,52 @@
 import { createSlice, combineReducers } from '@reduxjs/toolkit'
 import { users } from 'api/api'
 import type { User } from 'api/api'
-import { createAsyncThunkReducer } from 'app/utils'
-import type { AsyncReturnType } from 'app/utils'
+import {
+  createApiAsyncThunk,
+  createExtraReducer,
+  createApiAsyncThunkWithNoArg,
+} from 'app/utils'
 
-const { asyncThunk: login, reducer: loginReducer } = createAsyncThunkReducer<
-  AsyncReturnType<typeof users.login>,
-  Parameters<typeof users.login>[0]
->('user/login', users.login)
+const login = createApiAsyncThunk(users.login, 'user/login')
+const loginReducer = createExtraReducer(login)
 
-const { asyncThunk: signup, reducer: signupReducer } = createAsyncThunkReducer<
-  AsyncReturnType<typeof users.signup>,
-  Parameters<typeof users.signup>[0]
->('user/signup', users.signup)
+const signup = createApiAsyncThunk(users.signup, 'user/signup')
+const signupReducer = createExtraReducer(signup)
 
-const {
-  asyncThunk: updateOne,
-  reducer: updateOneReducer,
-} = createAsyncThunkReducer<
-  AsyncReturnType<typeof users.updateOne>,
-  Parameters<typeof users.updateOne>[0]
->('user/updateOne', users.updateOne)
+const updateOne = createApiAsyncThunk(users.updateOne, 'user/updateOne')
+const updateOneReducer = createExtraReducer(updateOne)
 
-const {
-  asyncThunk: getCurrent,
-  reducer: getCurrentReducer,
-} = createAsyncThunkReducer<AsyncReturnType<typeof users.getCurrent>>(
-  'user/getCurrent',
-  users.getCurrent
+const getCurrent = createApiAsyncThunkWithNoArg(
+  users.getCurrent,
+  'user/getCurrent'
 )
+const getCurrentReducer = createExtraReducer(getCurrent)
 
 interface InitialState {
   user: User
 }
-const initialState: InitialState = {
+let initialState: InitialState = {
   user: {} as User,
 }
+function saveJwtToken(token: string) {
+  localStorage.setItem('jwtToken', token)
+}
+
 const userSlice = createSlice({
   name: 'User',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(login.fulfilled, (state, action) => {
-      state.user = action.payload.user
+    builder.addCase(login.fulfilled, (state, { payload }) => {
+      state.user = payload.user
+      saveJwtToken(payload.user.token)
     })
-    builder.addCase(signup.fulfilled, (state, action) => {
-      state.user = action.payload.user
+    builder.addCase(signup.fulfilled, (state, { payload }) => {
+      state.user = payload.user
+      saveJwtToken(payload.user.token)
     })
-    builder.addCase(getCurrent.fulfilled, (state, action) => {
-      state.user = action.payload.user
+    builder.addCase(getCurrent.fulfilled, (state, { payload }) => {
+      state.user = payload.user
     })
   },
 })

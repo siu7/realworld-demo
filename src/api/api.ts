@@ -7,33 +7,31 @@ function isJSON(str: string | undefined) {
     return false
   }
 }
-interface ErrorResponse {
+
+export interface ErrorResponse {
   errors: {
     [key: string]: string[]
   }
 }
-function parseErrorDataToString(errorResponse: ErrorResponse) {
-  let msg = ''
-  let errors = errorResponse.errors
-  for (const key in errors) {
-    msg += key + ' '
-    for (const error of errors[key]) {
-      msg += error + ' '
-    }
-  }
-  return msg
-}
 
-export const errorMsg = (e: WretcherError) =>
+export const handleError = (e: WretcherError): ErrorResponse['errors'] =>
   e.response
     ? e.text && isJSON(e.text)
-      ? parseErrorDataToString(JSON.parse(e.text))
-      : `${e.response.status} ${e.response.statusText}`
-    : e.toString()
-let base = wretch().url('https://conduit.productionready.io/api')
+      ? JSON.parse(e.text).errors
+      : { unknown: `${e.response.status} ${e.response.statusText}` }
+    : { unknown: e.toString() }
 
-let token: string | null = localStorage.getItem('@token')
-if (token) base.auth(`Token ${token}`)
+function createApi() {
+  let token: string | null = localStorage.getItem('jwtToken')
+  if (token) {
+    return wretch()
+      .url('https://conduit.productionready.io/api')
+      .auth(`Token ${token}`)
+  } else {
+    return wretch().url('https://conduit.productionready.io/api')
+  }
+}
+let base = createApi()
 
 export type Article = {
   slug: string
@@ -41,8 +39,8 @@ export type Article = {
   description: string
   body: string
   tagList: string[]
-  createdAt: Date
-  updatedAt: Date
+  createdAt: string
+  updatedAt: string
   favorited: boolean
   favoritesCount: number
   author: Profile
@@ -151,7 +149,7 @@ export const comments = {
 let profileApi = base.url('/profiles')
 export type Profile = {
   username: string
-  bio: string
+  bio: string | null
   image: string
   following: boolean
 }
@@ -168,6 +166,7 @@ export const profiles = {
 }
 
 let usersApi = base.url('/users')
+let userApi = base.url('/user')
 export type User = {
   email: string
   token: string
@@ -205,9 +204,9 @@ export const users = {
     await usersApi.url('/login').post(body).json(),
   signup: async (body: SignupBody): Promise<UserResponse> =>
     await usersApi.post(body).json(),
-  getCurrent: async (): Promise<UserResponse> => await usersApi.get().json(),
+  getCurrent: async (): Promise<UserResponse> => await userApi.get().json(),
   updateOne: async (body: UpdateUserBody): Promise<UserResponse> =>
-    await usersApi.put(body).json(),
+    await userApi.put(body).json(),
 }
 
 let tagsApi = base.url('/tags')

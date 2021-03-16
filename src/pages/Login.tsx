@@ -1,5 +1,6 @@
-import { useForm } from 'utils/useForm'
 import type { LoginBody } from 'api/api'
+import { useForm } from 'utils/useForm'
+import { useLogin } from 'features/user/hooks'
 
 export default function Login() {
   const { formData, handleInputChange, handleSubmit } = useForm<
@@ -10,10 +11,11 @@ export default function Login() {
       password: '',
     },
     () =>
-      console.log({
+      login({
         user: formData,
       })
   )
+  const { login, loading } = useLogin()
 
   const { email, password } = formData
   return (
@@ -32,7 +34,9 @@ export default function Login() {
         value={password}
         onChange={handleInputChange}
       />
-      <button type="submit">Login</button>
+      <button type="submit" disabled={loading}>
+        Login
+      </button>
     </form>
   )
 }

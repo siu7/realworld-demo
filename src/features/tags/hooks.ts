@@ -6,7 +6,7 @@ import { getMany } from 'features/tags/slice'
 const tagsSelector = (state: RootState) => state.tags.data
 export function useGetTags() {
   const dispatch = useAppDispatch()
-  const { loading, error } = useAppSelector((state) => state.tags.getMany)
+  const { loading, errors } = useAppSelector((state) => state.tags.getMany)
   const { tags } = useAppSelector(tagsSelector)
   useEffect(() => {
     dispatch(getMany())
@@ -14,6 +14,6 @@ export function useGetTags() {
   return {
     tags,
     loading,
-    error,
+    errors,
   }
 }

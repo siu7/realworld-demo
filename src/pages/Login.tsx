@@ -1,8 +1,12 @@
+import { useAppDispatch, useAppSelector } from 'app/hooks'
 import type { LoginBody } from 'api/api'
 import { useForm } from 'utils/useForm'
-import { useLogin } from 'features/user/hooks'
+import { login } from 'features/user/slice'
+import { ErrorsList } from 'components/ErrorsList'
 
 export default function Login() {
+  const dispatch = useAppDispatch()
+  const { loading, errors } = useAppSelector((state) => state.user.login)
   const { formData, handleInputChange, handleSubmit } = useForm<
     LoginBody['user']
   >(
@@ -11,15 +15,17 @@ export default function Login() {
       password: '',
     },
     () =>
-      login({
-        user: formData,
-      })
+      dispatch(
+        login({
+          user: formData,
+        })
+      )
   )
-  const { login, loading } = useLogin()
 
   const { email, password } = formData
   return (
     <form onSubmit={handleSubmit}>
+      {errors && <ErrorsList errors={errors} />}
       <input
         type="email"
         name="email"

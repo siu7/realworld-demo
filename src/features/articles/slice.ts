@@ -39,7 +39,6 @@ interface InitialState {
   articlesCount?: number
   getArticlesFilter: GetArticlesFilters
   article?: Article
-  slug: string | null
   feeds: Article[]
   feedsCount?: number
   offset: number
@@ -48,7 +47,6 @@ interface InitialState {
 const initialState: InitialState = {
   articles: [],
   getArticlesFilter: {},
-  slug: null,
   feeds: [],
   offset: 0,
   limit: 10,

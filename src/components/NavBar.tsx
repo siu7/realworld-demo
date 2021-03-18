@@ -5,7 +5,7 @@ export default function NavBar() {
   const { user } = useAppSelector((state) => state.user.data)
   const { loading } = useAppSelector((state) => state.user.getCurrent)
   let linkItem = [{ to: '/', text: 'Home' }]
-  if (user.token) {
+  if (user.username) {
     linkItem.push(
       { to: '/settings', text: 'Settings' },
       { to: '/editor', text: 'New Article' },

@@ -51,3 +51,10 @@ export function useGetCurrentUser() {
     errors,
   }
 }
+export function useIsAuthed() {
+  const { user } = useAppSelector(userSelector)
+  return {
+    user,
+    isAuthed: user.token ? true : false,
+  }
+}

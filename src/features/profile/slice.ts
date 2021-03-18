@@ -17,9 +17,8 @@ const unfollowOneReducer = createExtraReducer(unfollowOne)
 
 const profileSlice = createSlice({
   name: 'profile',
-  initialState: { profile: {}, username: null } as {
+  initialState: { profile: {} } as {
     profile: Profile
-    username: string | null
   },
   reducers: {},
   extraReducers: (builder) => {

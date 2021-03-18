@@ -1,8 +1,12 @@
+import { useAppDispatch, useAppSelector } from 'app/hooks'
 import type { SignupBody } from 'api/api'
 import { useForm } from 'utils/useForm'
-import { useSignup } from 'features/user/hooks'
+import { signup } from 'features/user/slice'
+import { ErrorsList } from 'components/ErrorsList'
 
 export default function Signup() {
+  const dispatch = useAppDispatch()
+  const { loading, errors } = useAppSelector((state) => state.user.signup)
   const { formData, handleInputChange, handleSubmit } = useForm<
     SignupBody['user']
   >(
@@ -12,15 +16,17 @@ export default function Signup() {
       password: '',
     },
     () =>
-      signup({
-        user: formData,
-      })
+      dispatch(
+        signup({
+          user: formData,
+        })
+      )
   )
-  const { signup, loading } = useSignup()
 
   const { username, email, password } = formData
   return (
     <form onSubmit={handleSubmit}>
+      {errors && <ErrorsList errors={errors} />}
       <input
         type="text"
         name="username"

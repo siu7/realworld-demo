@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from 'app/hooks'
 import type { RootState } from 'app/store'
 import { getMany, createOne, deleteOne } from 'features/comments/slice'
@@ -9,11 +8,9 @@ export function useGetComments() {
   const dispatch = useAppDispatch()
   const { loading, errors } = useAppSelector((state) => state.comments.getMany)
   const { comments } = useAppSelector(commentsSelector)
-  const { slug } = useAppSelector((state) => state.articles.data)
-  useEffect(() => {
-    if (slug) dispatch(getMany(slug))
-  }, [dispatch])
   return {
+    getComments: (params: Parameters<typeof getMany>[0]) =>
+      dispatch(getMany(params)),
     comments,
     loading,
     errors,

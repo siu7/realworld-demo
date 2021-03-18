@@ -1,10 +1,24 @@
-import { useGetArticles } from 'features/articles/hooks'
-import { useGetTags } from 'features/tags/hooks'
-import ArticlesList from 'components/ArticlesList'
+import { useEffect } from 'react'
+import { useAppDispatch, useAppSelector } from 'app/hooks'
+import { ArticlesList } from 'components/ArticlesList'
+import { getMany } from 'features/articles/slice'
+import { getMany as getTags } from 'features/tags/slice'
 
 export default function Home() {
-  //const { articles, loading: articlesLoading } = useGetArticles()
-  //const { tags, loading: tagsLoading } = useGetTags()
+  //const dispatch = useAppDispatch()
+  //const { articles, getArticlesFilter, offset, limit } = useAppSelector(
+  //(state) => state.articles.data
+  //)
+  //const { tags } = useAppSelector((state) => state.tags.data)
+
+  //useEffect(() => {
+  //if (articles.length === 0)
+  //dispatch(getMany({ ...getArticlesFilter, offset, limit }))
+  //}, [dispatch, articles, getArticlesFilter, offset, limit])
+
+  //useEffect(() => {
+  //if (tags.length === 0) dispatch(getTags())
+  //}, [dispatch, tags])
 
   const article = {
     title: 'Minima omnis reprehe',

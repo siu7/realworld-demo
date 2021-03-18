@@ -1,15 +1,9 @@
+import { Link } from 'wouter'
 import { Article } from 'api/api'
-import {
-  useFavoriteArticle,
-  useUnfavoriteArticle,
-} from 'features/articles/hooks'
+import { ArticleMeta } from 'components/ArticleMeta'
+import { FavoriteButton } from 'components/FavoriteButton'
 
-export default function ArticlesList({ articles }: { articles: Article[] }) {
-  const { favoriteArticle, loading: favoriteLoading } = useFavoriteArticle()
-  const {
-    unfavoriteArticle,
-    loading: unfavoriteLoading,
-  } = useUnfavoriteArticle()
+export function ArticlesList({ articles }: { articles: Article[] }) {
   return (
     <div>
       {articles.map(
@@ -25,28 +19,26 @@ export default function ArticlesList({ articles }: { articles: Article[] }) {
         }) => (
           <div key={slug}>
             <div>
-              {author.image}
               <div>
-                {author.username}
-                {createdAt}
-              </div>
-              <div>
-                <button
-                  disabled={favoriteLoading || unfavoriteLoading}
-                  onClick={() =>
-                    favorited ? unfavoriteArticle(slug) : favoriteArticle(slug)
-                  }
-                >
-                  {favoritesCount}
-                </button>
+                <ArticleMeta author={author} createdAt={createdAt} />
+                <FavoriteButton
+                  favorited={favorited}
+                  slug={slug}
+                  favoritesCount={favoritesCount}
+                  isCompact={true}
+                />
               </div>
             </div>
             <div>
-              <h2>{title}</h2>
-              <p>{description}</p>
+              <h2>
+                <Link href={`/article/${slug}`}>{title}</Link>
+              </h2>
+              <p>
+                <Link href={`/article/${slug}`}>{description}</Link>
+              </p>
             </div>
             <div>
-              readmore
+              <Link href={`/article/${slug}`}>readmore</Link>
               {tagList}
             </div>
           </div>

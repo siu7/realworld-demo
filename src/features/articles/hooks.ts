@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { useRoute } from 'wouter'
 import { useAppDispatch, useAppSelector } from 'app/hooks'
 import type { RootState } from 'app/store'
 import {
@@ -32,11 +33,10 @@ export function useGetArticles() {
 export function useGetArticle() {
   const dispatch = useAppDispatch()
   const { loading, errors } = useAppSelector((state) => state.articles.getOne)
-  const { article, slug } = useAppSelector(articlesSelector)
-  useEffect(() => {
-    if (slug) dispatch(getOne(slug))
-  }, [dispatch, slug])
+  const { article } = useAppSelector(articlesSelector)
   return {
+    getArticle: (params: Parameters<typeof getOne>[0]) =>
+      dispatch(getOne(params)),
     article,
     loading,
     errors,

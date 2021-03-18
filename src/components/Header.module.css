@@ -1,0 +1,22 @@
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0.5rem 2rem;
+}
+
+.brand {
+  color: var(--primary);
+  font-size: 1.5rem;
+}
+.navList {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.navList a {
+  color: rgba(0, 0, 0, 0.3);
+}
+.navList a:hover {
+  color: rgba(0, 0, 0, 0.6);
+}

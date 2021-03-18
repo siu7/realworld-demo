@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from 'app/hooks'
 import { ArticlesList } from 'components/ArticlesList'
 import { getMany } from 'features/articles/slice'
 import { getMany as getTags } from 'features/tags/slice'
+import { Banner } from 'components/Banner'
 
 export default function Home() {
   //const dispatch = useAppDispatch()
@@ -39,7 +40,10 @@ export default function Home() {
   }
   return (
     <div>
-      <label>Home</label>
+      <Banner>
+        <h1>conduit</h1>
+        <p>A place to share your knowledge.</p>
+      </Banner>
       <ArticlesList articles={[article]} />
     </div>
   )

@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from 'app/hooks'
 import { getCurrent } from 'features/user/slice'
 import { isAuthedSelector } from 'features/user/selectors'
-import NavBar from 'components/NavBar'
+import Header from 'components/Header'
 import Routes from 'routes/Routes'
 
 function App() {
@@ -14,10 +14,10 @@ function App() {
   }, [dispatch, isAuthed])
 
   return (
-    <div>
-      <NavBar />
+    <>
+      <Header />
       <Routes />
-    </div>
+    </>
   )
 }
 

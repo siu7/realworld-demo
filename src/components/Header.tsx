@@ -1,8 +1,8 @@
 import { Link } from 'wouter'
 import { useAppSelector } from 'app/hooks'
-import styles from './NavBar.module.css'
+import styles from './Header.module.css'
 
-export default function NavBar() {
+export default function Header() {
   const { user } = useAppSelector((state) => state.user.data)
   const { loading } = useAppSelector((state) => state.user.getCurrent)
   let linkItem = [{ to: '/', text: 'Home' }]
@@ -20,17 +20,17 @@ export default function NavBar() {
   }
 
   return (
-    <div className={styles.NavBar}>
-      <h3>Conduit</h3>
+    <div className={`container ${styles.header}`}>
+      <h3 className={styles.brand}>
+        <Link to="/">Conduit</Link>
+      </h3>
       {!loading && (
-        <nav>
-          <ul>
-            {linkItem.map(({ to, text }) => (
-              <li key={to}>
-                <Link to={to}>{text}</Link>
-              </li>
-            ))}
-          </ul>
+        <nav className={styles.navList}>
+          {linkItem.map(({ to, text }) => (
+            <Link to={to} key={to}>
+              {text}
+            </Link>
+          ))}
         </nav>
       )}
     </div>

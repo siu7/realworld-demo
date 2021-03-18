@@ -1,0 +1,9 @@
+.meta {
+  display: flex;
+  flex-direction: row;
+}
+.avatar {
+  border-radius: 4rem;
+  height: 32px;
+  width: 32px;
+}

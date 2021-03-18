@@ -9,7 +9,7 @@ export function ArticleRow({ article }: { article: Article }) {
   return (
     <div>
       <ArticleMeta author={author} createdAt={createdAt} />
-      <FollowButton author={author} />
+      <FollowButton following={author.following} username={author.username} />
       <FavoriteButton
         favorited={favorited}
         slug={slug}

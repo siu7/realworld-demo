@@ -7,6 +7,29 @@ import { createApiAsyncThunk, createExtraReducer } from 'app/utils'
 const getMany = createApiAsyncThunk(articles.getMany, 'articles/getMany')
 const getManyReducer = createExtraReducer(getMany)
 
+const getArticlesByFavorited = createApiAsyncThunk(
+  articles.getMany,
+  'articles/getArticlesByFavorited'
+)
+const getArticlesByFavoritedReducer = createExtraReducer(getArticlesByFavorited)
+
+const getArticlesByTag = createApiAsyncThunk(
+  articles.getMany,
+  'articles/getArticlesByTag'
+)
+const getArticlesByTagReducer = createExtraReducer(getArticlesByTag)
+
+const getArticlesByAuthor = createApiAsyncThunk(
+  articles.getMany,
+  'articles/getArticlesByAuthor'
+)
+const getArticlesByAuthorReducer = createExtraReducer(getArticlesByAuthor)
+const getArticlesFeeds = createApiAsyncThunk(
+  articles.getFeeds,
+  'articles/getArticlesFeeds'
+)
+const getArticlesFeedsReducer = createExtraReducer(getArticlesFeeds)
+
 const getOne = createApiAsyncThunk(articles.getOne, 'articles/getOne')
 const getOneReducer = createExtraReducer(getOne)
 
@@ -18,9 +41,6 @@ const updateOneReducer = createExtraReducer(updateOne)
 
 const deleteOne = createApiAsyncThunk(articles.deleteOne, 'articles/deleteOne')
 const deleteOneReducer = createExtraReducer(deleteOne)
-
-const getFeeds = createApiAsyncThunk(articles.getFeeds, 'articles/getFeeds')
-const getFeedsReducer = createExtraReducer(getFeeds)
 
 const favoriteOne = createApiAsyncThunk(
   articles.favoriteOne,
@@ -37,17 +57,29 @@ const unfavoriteOneReducer = createExtraReducer(unfavoriteOne)
 interface InitialState {
   articles: Article[]
   articlesCount?: number
+  articlesByFavorited: Article[]
+  articlesByFavoritedCount?: number
+  articlesByTag: Article[]
+  articlesByTagCount?: number
+  articlesByAuthor: Article[]
+  articlesByAuthorCount?: number
+  articlesFeeds: Article[]
+  articlesFeedsCount?: number
+
   getArticlesFilter: GetArticlesFilters
   article?: Article
-  feeds: Article[]
   feedsCount?: number
   offset: number
   limit: number
 }
 const initialState: InitialState = {
   articles: [],
+  articlesByFavorited: [],
+  articlesByTag: [],
+  articlesByAuthor: [],
+  articlesFeeds: [],
+
   getArticlesFilter: {},
-  feeds: [],
   offset: 0,
   limit: 10,
 }
@@ -71,6 +103,23 @@ const articlesSlice = createSlice({
       state.articles = payload.articles
       state.articlesCount = { payload }.payload.articlesCount
     })
+    builder.addCase(getArticlesByFavorited.fulfilled, (state, { payload }) => {
+      state.articlesByFavorited = payload.articles
+      state.articlesByFavoritedCount = payload.articlesCount
+    })
+    builder.addCase(getArticlesByTag.fulfilled, (state, { payload }) => {
+      state.articlesByTag = payload.articles
+      state.articlesByTagCount = payload.articlesCount
+    })
+    builder.addCase(getArticlesByAuthor.fulfilled, (state, { payload }) => {
+      state.articlesByAuthor = payload.articles
+      state.articlesByAuthorCount = payload.articlesCount
+    })
+    builder.addCase(getArticlesFeeds.fulfilled, (state, { payload }) => {
+      state.articlesFeeds = payload.articles
+      state.articlesFeedsCount = payload.articlesCount
+    })
+
     builder.addCase(getOne.fulfilled, (state, { payload }) => {
       state.article = payload.article
     })
@@ -79,10 +128,6 @@ const articlesSlice = createSlice({
     })
     builder.addCase(updateOne.fulfilled, (state, { payload }) => {
       state.article = payload.article
-    })
-    builder.addCase(getFeeds.fulfilled, (state, { payload }) => {
-      state.feeds = payload.articles
-      state.feedsCount = payload.articlesCount
     })
     builder.addCase(favoriteOne.fulfilled, (state, { payload }) => {
       state.article = payload.article
@@ -95,21 +140,28 @@ const articlesSlice = createSlice({
 export const articlesReducer = combineReducers({
   data: articlesSlice.reducer,
   getMany: getManyReducer,
+  getArticlesFeeds: getArticlesFeedsReducer,
+  getArticlesByFavorited: getArticlesByFavoritedReducer,
+  getArticlesByTag: getArticlesByTagReducer,
+  getArticlesByAuthor: getArticlesByAuthorReducer,
+
   getOne: getOneReducer,
   createOne: createOneReducer,
   updateOne: updateOneReducer,
   deleteOne: deleteOneReducer,
-  getFeeds: getFeedsReducer,
   favoriteOne: favoriteOneReducer,
   unfavoriteOne: unfavoriteOneReducer,
 })
 export {
   getMany,
+  getArticlesFeeds,
+  getArticlesByFavorited,
+  getArticlesByTag,
+  getArticlesByAuthor,
   getOne,
   createOne,
   updateOne,
   deleteOne,
-  getFeeds,
   favoriteOne,
   unfavoriteOne,
 }

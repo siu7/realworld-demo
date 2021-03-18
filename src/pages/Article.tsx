@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { Link, useRoute } from 'wouter'
 import { useAppDispatch, useAppSelector } from 'app/hooks'
 import { ArticleRow } from 'components/ArticleRow'
-import { useIsAuthed } from 'features/user/hooks'
+import { isAuthedSelector } from 'features/user/selectors'
 import { getOne } from 'features/articles/slice'
 import { getMany } from 'features/comments/slice'
 
@@ -16,9 +16,9 @@ export default function Article() {
       dispatch(getOne(params.slug))
       dispatch(getMany(params.slug))
     }
-  }, [match, params?.username, dispatch])
+  }, [match, params?.slug, dispatch])
 
-  const { isAuthed } = useIsAuthed()
+  const isAuthed = useAppSelector(isAuthedSelector)
   //const article = {
   //title: 'Minima omnis reprehe',
   //slug: 'minima-omnis-reprehe-7mgcmp',

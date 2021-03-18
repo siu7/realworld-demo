@@ -7,7 +7,6 @@ import Editor from 'pages/Editor'
 import EditArticle from 'pages/Editor/EditArticle'
 import Article from 'pages/Article'
 import Profile from 'pages/Profile'
-import Favorites from 'pages/Profile/Favorites'
 import { useAppSelector } from 'app/hooks'
 import ProtectedRoute from 'routes/ProtectedRoute'
 import AuthedDisabledRoute from 'routes/AuthedDisabledRoute'
@@ -29,7 +28,7 @@ export function Routes() {
       />
       <Route path="/article/:slug" component={Article} />
       <Route path="/profile/:username" component={Profile} />
-      <Route path="/profile/:username/favorite" component={Favorites} />
+      <Route path="/profile/:username/favorites" component={Profile} />
       <Route path="/" component={Home} />
       <Route path="/:rest*">
         {(params) => `404, Sorry the page ${params.rest} does not exist!`}

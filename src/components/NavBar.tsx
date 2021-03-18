@@ -1,5 +1,6 @@
 import { Link } from 'wouter'
 import { useAppSelector } from 'app/hooks'
+import styles from './NavBar.module.css'
 
 export default function NavBar() {
   const { user } = useAppSelector((state) => state.user.data)
@@ -19,7 +20,7 @@ export default function NavBar() {
   }
 
   return (
-    <div>
+    <div className={styles.NavBar}>
       <h3>Conduit</h3>
       {!loading && (
         <nav>

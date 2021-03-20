@@ -3,6 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import { articles } from 'api/api'
 import type { Article, GetArticlesFilters } from 'api/api'
 import { createApiAsyncThunk, createExtraReducer } from 'app/utils'
+import { articleTabs } from './articleTabs'
 
 const getMany = createApiAsyncThunk(articles.getMany, 'articles/getMany')
 const getManyReducer = createExtraReducer(getMany)
@@ -54,40 +55,138 @@ const unfavoriteOne = createApiAsyncThunk(
 )
 const unfavoriteOneReducer = createExtraReducer(unfavoriteOne)
 
-interface InitialState {
+type TabType = 'global' | 'feed' | 'tag' | 'favorited' | 'author'
+export interface ArticleTab {
+  name: string
+  type: TabType
+  active: boolean
+  visible: boolean
+  previousActive?: boolean
+}
+export interface ArticlesSet {
   articles: Article[]
+  offset: number
   articlesCount?: number
-  articlesByFavorited: Article[]
-  articlesByFavoritedCount?: number
-  articlesByTag: Article[]
-  articlesByTagCount?: number
-  articlesByAuthor: Article[]
-  articlesByAuthorCount?: number
-  articlesFeeds: Article[]
-  articlesFeedsCount?: number
+}
+
+interface InitialState {
+  articles: ArticlesSet
+  articlesByFavorited: ArticlesSet
+  articlesByTag: ArticlesSet
+  articlesByAuthor: ArticlesSet
+  articlesFeeds: ArticlesSet
 
   getArticlesFilter: GetArticlesFilters
   article?: Article
   feedsCount?: number
   offset: number
   limit: number
+  selectedTabType: TabType
+  homeSelectedTabType: TabType
+  articleTabs: ArticleTab[]
 }
 const initialState: InitialState = {
-  articles: [],
-  articlesByFavorited: [],
-  articlesByTag: [],
-  articlesByAuthor: [],
-  articlesFeeds: [],
+  articles: { articles: [], offset: 0 },
+  articlesByFavorited: { articles: [], offset: 0 },
+  articlesByTag: { articles: [], offset: 0 },
+  articlesByAuthor: { articles: [], offset: 0 },
+  articlesFeeds: { articles: [], offset: 0 },
 
   getArticlesFilter: {},
   offset: 0,
   limit: 10,
+  selectedTabType: 'global',
+  homeSelectedTabType: 'global',
+  articleTabs,
 }
 
 const articlesSlice = createSlice({
   name: 'articles',
   initialState,
   reducers: {
+    setTab(
+      state,
+      { payload }: PayloadAction<{ index: number; tab: ArticleTab }>
+    ) {
+      state.articleTabs[payload.index] = payload.tab
+    },
+    setTabActive(
+      state,
+      { payload }: PayloadAction<[index: number, active: boolean]>
+    ) {
+      state.articleTabs[payload[0]].active = payload[1]
+    },
+    setTabVisible(
+      state,
+      { payload }: PayloadAction<[index: number, visible: boolean]>
+    ) {
+      state.articleTabs[payload[0]].visible = payload[1]
+    },
+    setTagTabName(state, { payload }: PayloadAction<string>) {
+      state.articleTabs[2].name = payload
+    },
+    setPreviousActiveTab(state) {
+      let activeTabIndex = state.articleTabs.findIndex((tab) => tab.active)
+      for (let tab of state.articleTabs) {
+        tab.previousActive = false
+      }
+      state.articleTabs[activeTabIndex].previousActive = true
+    },
+    unsetTabs(state) {
+      for (let tab of state.articleTabs) {
+        tab.visible = false
+        tab.active = false
+      }
+    },
+    unsetTabsActive(state) {
+      for (let tab of state.articleTabs) {
+        tab.active = false
+      }
+    },
+    unsetTabsVisible(state) {
+      for (let tab of state.articleTabs) {
+        tab.visible = false
+      }
+    },
+    setOffset(state, { payload }: PayloadAction<number>) {
+      let activeTab = state.articleTabs.find((tab) => tab.active)
+      if (activeTab?.type === 'global') {
+        state.articles.offset = payload
+      }
+      if (activeTab?.type === 'feed') {
+        state.articlesFeeds.offset = payload
+      }
+      if (activeTab?.type === 'tag') {
+        state.articlesByTag.offset = payload
+      }
+      if (activeTab?.type === 'favorited') {
+        state.articlesByFavorited.offset = payload
+      }
+      if (activeTab?.type === 'author') {
+        state.articlesByAuthor.offset = payload
+      }
+    },
+    clearArticles(state) {
+      let activeTab = state.articleTabs.find((tab) => tab.active)
+      if (activeTab?.type === 'global') {
+        state.articles.articles = []
+      }
+      if (activeTab?.type === 'feed') {
+        state.articlesFeeds.articles = []
+      }
+      if (activeTab?.type === 'tag') {
+        state.articlesByTag.articles = []
+      }
+      if (activeTab?.type === 'favorited') {
+        state.articlesByFavorited.articles = []
+      }
+      if (activeTab?.type === 'author') {
+        state.articlesByAuthor.articles = []
+      }
+    },
+    setHomeSelectedTabType(state, { payload }: PayloadAction<TabType>) {
+      state.homeSelectedTabType = payload
+    },
     setTag(state, { payload }: PayloadAction<string>) {
       state.getArticlesFilter.tag = payload
     },
@@ -97,27 +196,30 @@ const articlesSlice = createSlice({
     setFavorited(state, { payload }: PayloadAction<string>) {
       state.getArticlesFilter.favorited = payload
     },
+    setSelectedTabType(state, { payload }: PayloadAction<TabType>) {
+      state.selectedTabType = payload
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getMany.fulfilled, (state, { payload }) => {
-      state.articles = payload.articles
-      state.articlesCount = { payload }.payload.articlesCount
+      state.articles.articles = payload.articles
+      state.articles.articlesCount = { payload }.payload.articlesCount
     })
     builder.addCase(getArticlesByFavorited.fulfilled, (state, { payload }) => {
-      state.articlesByFavorited = payload.articles
-      state.articlesByFavoritedCount = payload.articlesCount
+      state.articlesByFavorited.articles = payload.articles
+      state.articlesByFavorited.articlesCount = payload.articlesCount
     })
     builder.addCase(getArticlesByTag.fulfilled, (state, { payload }) => {
-      state.articlesByTag = payload.articles
-      state.articlesByTagCount = payload.articlesCount
+      state.articlesByTag.articles = payload.articles
+      state.articlesByTag.articlesCount = payload.articlesCount
     })
     builder.addCase(getArticlesByAuthor.fulfilled, (state, { payload }) => {
-      state.articlesByAuthor = payload.articles
-      state.articlesByAuthorCount = payload.articlesCount
+      state.articlesByAuthor.articles = payload.articles
+      state.articlesByAuthor.articlesCount = payload.articlesCount
     })
     builder.addCase(getArticlesFeeds.fulfilled, (state, { payload }) => {
-      state.articlesFeeds = payload.articles
-      state.articlesFeedsCount = payload.articlesCount
+      state.articlesFeeds.articles = payload.articles
+      state.articlesFeeds.articlesCount = payload.articlesCount
     })
 
     builder.addCase(getOne.fulfilled, (state, { payload }) => {
@@ -165,4 +267,20 @@ export {
   favoriteOne,
   unfavoriteOne,
 }
-export const { setTag, setAuthor, setFavorited } = articlesSlice.actions
+export const {
+  setPreviousActiveTab,
+  setTagTabName,
+  unsetTabsVisible,
+  unsetTabsActive,
+  unsetTabs,
+  setTab,
+  setTabActive,
+  setTabVisible,
+  setTag,
+  setAuthor,
+  setFavorited,
+  setSelectedTabType,
+  setOffset,
+  clearArticles,
+  setHomeSelectedTabType,
+} = articlesSlice.actions

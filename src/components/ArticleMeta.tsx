@@ -11,11 +11,33 @@ export const ArticleMeta = ({
 }) => (
   <div className={styles.meta}>
     <Link href={`/profile/${author.username}`}>
-      <img src={author.image} alt="avatar" className={styles.avatar} />
+      <img src={author.image} className={styles.avatar} alt="" />
     </Link>
-    <div>
+    <div className={styles.username}>
       <Link href={`/profile/${author.username}`}>{author.username}</Link>
-      {createdAt}
+      <span>{formatDate(createdAt)}</span>
     </div>
   </div>
 )
+
+function formatDate(dateString: string) {
+  const d = new Date(dateString)
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ]
+  return `${days[d.getDay()]} ${
+    months[d.getMonth()]
+  } ${d.getDate()} ${d.getFullYear()}`
+}

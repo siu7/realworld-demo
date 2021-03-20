@@ -1,9 +1,25 @@
 .meta {
   display: flex;
   flex-direction: row;
+  align-items: center;
+  gap: 0.3rem;
 }
 .avatar {
   border-radius: 4rem;
   height: 32px;
   width: 32px;
+  cursor: pointer;
+}
+.username {
+  line-height: 1rem;
+}
+.username a {
+  display: block;
+  color: var(--primary);
+  font-weight: 500;
+}
+.username span {
+  color: #bbb;
+  font-size: 0.8rem;
+  font-weight: 300;
 }

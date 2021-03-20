@@ -1,0 +1,12 @@
+.activeTab {
+  border-bottom: 2px solid var(--primary);
+  color: var(--primary);
+  padding: 0.5em 1em;
+}
+.inactiveTab {
+  color: #aaa;
+  padding: 0.5em 1em;
+}
+.inactiveTab:hover {
+  color: #555;
+}

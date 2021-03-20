@@ -1,50 +1,89 @@
 import { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from 'app/hooks'
 import { ArticlesList } from 'components/ArticlesList'
-import { getMany } from 'features/articles/slice'
+import {
+  getMany,
+  getArticlesByTag,
+  setPreviousActiveTab,
+} from 'features/articles/slice'
 import { getMany as getTags } from 'features/tags/slice'
 import { Banner } from 'components/Banner'
+import { TagsList } from 'components/TagsList'
+import styles from './Home.module.css'
+import { ArticlesTab } from 'components/ArticlesTab'
 
 export default function Home() {
-  //const dispatch = useAppDispatch()
-  //const { articles, getArticlesFilter, offset, limit } = useAppSelector(
-  //(state) => state.articles.data
-  //)
-  //const { tags } = useAppSelector((state) => state.tags.data)
+  const dispatch = useAppDispatch()
+  const { articlesByTag, articles, limit } = useAppSelector(
+    (state) => state.articles.data
+  )
+  useEffect(() => {
+    if (articles.articles.length === 0)
+      dispatch(getMany({ offset: articles.offset, limit }))
+  }, [dispatch, articles.offset, limit, articles.articles.length])
 
-  //useEffect(() => {
-  //if (articles.length === 0)
-  //dispatch(getMany({ ...getArticlesFilter, offset, limit }))
-  //}, [dispatch, articles, getArticlesFilter, offset, limit])
+  const { tag } = useAppSelector(
+    (state) => state.articles.data.getArticlesFilter
+  )
+  useEffect(() => {
+    if (tag && articlesByTag.articles.length === 0)
+      dispatch(getArticlesByTag({ tag, limit, offset: articlesByTag.offset }))
+  }, [
+    dispatch,
+    limit,
+    tag,
+    articlesByTag.offset,
+    articlesByTag.articles.length,
+  ])
 
-  //useEffect(() => {
-  //if (tags.length === 0) dispatch(getTags())
-  //}, [dispatch, tags])
+  const { tags } = useAppSelector((state) => state.tags.data)
+  useEffect(() => {
+    if (tags.length === 0) dispatch(getTags())
+  }, [dispatch, tags])
 
-  const article = {
-    title: 'Minima omnis reprehe',
-    slug: 'minima-omnis-reprehe-7mgcmp',
-    body: 'Pariatur Eos optio',
-    createdAt: '2021-03-16T20:38:12.218Z',
-    updatedAt: '2021-03-16T20:38:12.218Z',
-    tagList: [],
-    description: 'Et facilis ex volupt',
-    author: {
-      username: 'ivan_ivan',
-      bio: null,
-      image: 'https://static.productionready.io/images/smiley-cyrus.jpg',
-      following: false,
-    },
-    favorited: false,
-    favoritesCount: 0,
-  }
+  const { loading: getArticlesByTagLoading } = useAppSelector(
+    (state) => state.articles.getArticlesByTag
+  )
+  const { loading: getManyLoading } = useAppSelector(
+    (state) => state.articles.getMany
+  )
+  const loading = getArticlesByTagLoading || getManyLoading
+
+  const { articleTabs } = useAppSelector((state) => state.articles.data)
+  let activeTabs = articleTabs.find((tab) => tab.active === true)
+
+  useEffect(() => {
+    return () => {
+      dispatch(setPreviousActiveTab())
+    }
+  }, [])
   return (
     <div>
       <Banner>
         <h1>conduit</h1>
         <p>A place to share your knowledge.</p>
       </Banner>
-      <ArticlesList articles={[article]} />
+      <div className={`container ${styles.grid}`}>
+        <div className={styles.articles}>
+          <ArticlesTab />
+          {loading ? (
+            <label>loading...</label>
+          ) : (
+            <ArticlesList
+              articlesSet={
+                activeTabs?.type === 'tag'
+                  ? articlesByTag
+                  : activeTabs?.type === 'feed'
+                  ? articles
+                  : articles
+              }
+            />
+          )}
+        </div>
+        <div className={styles.tags}>
+          <TagsList tags={tags} />
+        </div>
+      </div>
     </div>
   )
 }

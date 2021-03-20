@@ -1,0 +1,12 @@
+.row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+/*.row button {*/
+/*margin-left: 0.25rem;*/
+/*}*/
+/*.row div {*/
+/*margin-right: 1rem;*/
+/*}*/

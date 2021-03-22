@@ -1,12 +1,8 @@
-import { useEffect, useState } from 'react'
-import { useRoute, useLocation } from 'wouter'
+import { useEffect } from 'react'
+import { useRoute } from 'wouter'
 import { useAppDispatch, useAppSelector } from 'app/hooks'
 import { getOne } from 'features/profile/slice'
-import {
-  getArticlesByAuthor,
-  getArticlesByFavorited,
-  setSelectedTabType,
-} from 'features/articles/slice'
+import { getMany } from 'features/articles/slice'
 import { FollowButton } from 'components/FollowButton'
 import { ArticlesList } from 'components/ArticlesList'
 import styles from './Profile.module.css'
@@ -24,35 +20,20 @@ export default function Profile() {
     }
   }, [dispatch, usernameFromUrl])
 
-  const { articlesByAuthor, articlesByFavorited, limit } = useAppSelector(
-    (state) => state.articles.data
-  )
-  useEffect(() => {
-    if (usernameFromUrl) {
-      dispatch(
-        getArticlesByAuthor({
-          author: usernameFromUrl,
-          offset: articlesByAuthor.offset,
-          limit,
-        })
-      )
-    }
-  }, [dispatch, usernameFromUrl, articlesByAuthor.offset, limit])
-
-  useEffect(() => {
-    if (usernameFromUrl) {
-      dispatch(
-        getArticlesByFavorited({
-          favorited: usernameFromUrl,
-          offset: articlesByFavorited.offset,
-          limit,
-        })
-      )
-    }
-  }, [dispatch, usernameFromUrl, articlesByFavorited.offset, limit])
-
   const { articleTabs } = useAppSelector((state) => state.articles.data)
-  let activeTabs = articleTabs.find((tab) => tab.active === true)
+  let activeTab = articleTabs.find((tab) => tab.active === true)
+  const { limit, offset } = useAppSelector((state) => state.articles.data)
+  useEffect(() => {
+    if (usernameFromUrl) {
+      if (activeTab?.type === 'author') {
+        dispatch(getMany({ author: usernameFromUrl, offset, limit }))
+      }
+      if (activeTab?.type === 'favorited') {
+        dispatch(getMany({ favorited: usernameFromUrl, offset, limit }))
+      }
+    }
+  }, [dispatch, usernameFromUrl, offset, limit, activeTab?.type])
+
   const { profile } = useAppSelector((state) => state.profile.data)
   const { loading } = useAppSelector((state) => state.profile.getOne)
   const { username, following, image, bio } = profile
@@ -66,13 +47,7 @@ export default function Profile() {
       </div>
       <div className="container">
         <ArticlesTab />
-        <ArticlesList
-          articlesSet={
-            activeTabs?.type === 'author'
-              ? articlesByAuthor
-              : articlesByFavorited
-          }
-        />
+        <ArticlesList />
       </div>
     </div>
   )

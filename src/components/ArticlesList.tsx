@@ -3,35 +3,13 @@ import { useAppSelector, useAppDispatch } from 'app/hooks'
 import { ArticleMeta } from 'components/ArticleMeta'
 import { FavoriteButton } from 'components/FavoriteButton'
 import styles from './ArticlesList.module.css'
-import type { ArticlesSet } from 'features/articles/slice'
-import { setOffset, clearArticles } from 'features/articles/slice'
+import { setOffset } from 'features/articles/slice'
 
-export function ArticlesList({ articlesSet }: { articlesSet: ArticlesSet }) {
-  const { articles, offset, articlesCount } = articlesSet
-  const { loading: getManyLoading } = useAppSelector(
-    (state) => state.articles.getMany
+export function ArticlesList() {
+  const { articles, offset, limit, articlesCount } = useAppSelector(
+    (state) => state.articles.data
   )
-  const { loading: getArticlesByTagLoading } = useAppSelector(
-    (state) => state.articles.getArticlesByTag
-  )
-  const { loading: getArticlesFeedsLoading } = useAppSelector(
-    (state) => state.articles.getArticlesFeeds
-  )
-  const { loading: getArticlesByAuthorLoading } = useAppSelector(
-    (state) => state.articles.getArticlesByAuthor
-  )
-  const { loading: getArticlesByFavoritedLoading } = useAppSelector(
-    (state) => state.articles.getArticlesByFavorited
-  )
-
-  const loading =
-    getManyLoading ||
-    getArticlesByTagLoading ||
-    getArticlesFeedsLoading ||
-    getArticlesByAuthorLoading ||
-    getArticlesByFavoritedLoading
-
-  const { limit } = useAppSelector((state) => state.articles.data)
+  const { loading } = useAppSelector((state) => state.articles.getMany)
   return (
     <div>
       {loading ? (
@@ -103,7 +81,6 @@ function Pagination({
   const dispatch = useAppDispatch()
   function handlePageClick(index: number) {
     dispatch(setOffset(index))
-    dispatch(clearArticles())
   }
 
   return (

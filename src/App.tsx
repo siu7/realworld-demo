@@ -7,16 +7,15 @@ import Routes from 'routes/Routes'
 function App() {
   const dispatch = useAppDispatch()
   const { user } = useAppSelector((state) => state.user.data)
-  const { loading } = useAppSelector((state) => state.user.getCurrent)
+  let token = localStorage.getItem('jwtToken')
   useEffect(() => {
-    let token = localStorage.getItem('jwtToken')
     if (!user && token) dispatch(getCurrent())
-  }, [dispatch, user])
+  }, [dispatch, user, token])
 
   return (
     <>
       <Header />
-      <Routes />
+      {(user || !token) && <Routes />}
     </>
   )
 }

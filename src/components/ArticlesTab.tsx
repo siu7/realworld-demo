@@ -1,13 +1,15 @@
-import { useEffect } from 'react'
+import { useEffect, useCallback } from 'react'
 import { useRoute, useLocation } from 'wouter'
 import { useAppDispatch, useAppSelector } from 'app/hooks'
 import styles from './ArticlesTab.module.css'
 import {
   setTabActive,
-  setTabVisible,
-  setTagTabName,
   unsetTabs,
   unsetTabsActive,
+  setHomeTabs,
+  setAuthedHomeTabs,
+  setProfileTabs,
+  setFavoritesTabs,
 } from 'features/articles/slice'
 
 export function ArticlesTab() {
@@ -18,50 +20,27 @@ export function ArticlesTab() {
   const [matchFavorites, params2] = useRoute('/profile/:username/favorites')
   const username = params1?.username || params2?.username
 
-  const { tag } = useAppSelector(
-    (state) => state.articles.data.getArticlesFilter
-  )
   const { articleTabs } = useAppSelector((state) => state.articles.data)
   const { user } = useAppSelector((state) => state.user.data)
-  useEffect(() => {
+
+  const init = useCallback(() => {
     if (matchProfile) {
       dispatch(unsetTabs())
-      dispatch(setTabActive([3, true]))
-      dispatch(setTabActive([4, false]))
-      dispatch(setTabVisible([3, true]))
-      dispatch(setTabVisible([4, true]))
+      dispatch(setProfileTabs())
     }
     if (matchFavorites) {
       dispatch(unsetTabs())
-      dispatch(setTabActive([4, true]))
-      dispatch(setTabActive([3, false]))
-      dispatch(setTabVisible([3, true]))
-      dispatch(setTabVisible([4, true]))
+      dispatch(setFavoritesTabs())
     }
     if (matchHome) {
-      let previousActiveTabIndex = articleTabs.findIndex(
-        (tab) => tab.previousActive
-      )
       dispatch(unsetTabs())
-      if (user) {
-        dispatch(setTabVisible([0, true]))
-        dispatch(setTabVisible([1, true]))
-      } else {
-        dispatch(setTabVisible([1, true]))
-      }
-      if (tag) {
-        dispatch(setTagTabName(tag))
-        dispatch(setTabVisible([2, true]))
-      }
-      previousActiveTabIndex === -1
-        ? tag
-          ? dispatch(setTabActive([2, true]))
-          : user
-          ? dispatch(setTabActive([0, true]))
-          : dispatch(setTabActive([1, true]))
-        : dispatch(setTabActive([previousActiveTabIndex, true]))
+      user ? dispatch(setAuthedHomeTabs()) : dispatch(setHomeTabs())
     }
-  }, [dispatch, matchProfile, matchFavorites, matchHome, tag])
+  }, [dispatch, matchProfile, matchHome, matchFavorites, user])
+
+  useEffect(() => {
+    init()
+  }, [init])
 
   function handleTabClick(tabType: string, tabIndex: number) {
     if (matchProfile || matchFavorites) {

@@ -8,62 +8,18 @@ import styles from './Article.module.css'
 import { formatDate } from 'utils/formatDate'
 
 export default function Article() {
-  //const dispatch = useAppDispatch()
-  //const { article } = useAppSelector((state) => state.articles.data)
-  //const { comments } = useAppSelector((state) => state.comments.data)
-  //const [match, params] = useRoute('/article/:slug')
-  //useEffect(() => {
-  //if (match && params?.slug) {
-  //dispatch(getOne(params.slug))
-  //dispatch(getMany(params.slug))
-  //}
-  //}, [match, params?.slug, dispatch])
+  const dispatch = useAppDispatch()
+  const { article } = useAppSelector((state) => state.articles.data)
+  const { comments } = useAppSelector((state) => state.comments.data)
+  const [match, params] = useRoute('/article/:slug')
+  useEffect(() => {
+    if (match && params?.slug) {
+      dispatch(getOne(params.slug))
+      dispatch(getMany(params.slug))
+    }
+  }, [match, params?.slug, dispatch])
 
-  const user = useAppSelector((state) => state.user.data)
-  const article = {
-    title: 'Minima omnis reprehe',
-    slug: 'minima-omnis-reprehe-7mgcmp',
-    body: 'Pariatur Eos optio',
-    createdAt: '2021-03-16T20:38:12.218Z',
-    updatedAt: '2021-03-16T20:38:12.218Z',
-    tagList: [],
-    description: 'Et facilis ex volupt',
-    author: {
-      username: 'ivan_ivan',
-      bio: null,
-      image: '',
-      following: false,
-    },
-    favorited: false,
-    favoritesCount: 1,
-  }
-  const comments = [
-    {
-      id: 89416,
-      createdAt: '2021-03-16T20:38:22.467Z',
-      updatedAt: '2021-03-16T20:38:22.467Z',
-      body: 'Est totam tempora qu',
-      author: {
-        username: 'ivan_ivan',
-        bio: null,
-        image: '',
-        following: false,
-      },
-    },
-    {
-      id: 89416,
-      createdAt: '2021-03-16T20:38:22.467Z',
-      updatedAt: '2021-03-16T20:38:22.467Z',
-      body: 'Est totam tempora qu',
-      author: {
-        username: 'ivan_ivan',
-        bio: null,
-        image: '',
-        following: false,
-      },
-    },
-  ]
-  const { slug, tagList } = article
+  const { user } = useAppSelector((state) => state.user.data)
   return (
     <>
       {article && (
@@ -77,17 +33,29 @@ export default function Article() {
           <div className={`container ${styles.content}`}>
             <article>{article.body}</article>
             <div className={styles.tags}>
-              {tagList.map((tag) => (
-                <span key={`${slug}: ${tag}`}>{tag}</span>
+              {article.tagList.map((tag) => (
+                <span key={`${article.slug}: ${tag}`}>{tag}</span>
               ))}
             </div>
           </div>
         </>
       )}
       <div className={styles.comments}>
-        <ArticleRow article={article} />
+        {article && <ArticleRow article={article} />}
         {user ? (
-          <input />
+          <div className={styles.comment}>
+            <div className={styles.commentBody}>
+              <input />
+            </div>
+            <div className={styles.commentMeta}>
+              <img
+                src={user.image || ''}
+                className={styles.commentAvatar}
+                alt=""
+              />
+              <button className={styles.submit}>Post Comment</button>
+            </div>
+          </div>
         ) : (
           <span>
             <Link href="/login">login</Link>
@@ -97,12 +65,13 @@ export default function Article() {
         )}
         {comments &&
           comments.map((comment) => (
-            <div className={styles.comment}>
+            <div className={styles.comment} key={comment.id}>
               <div className={styles.commentBody}>{comment.body}</div>
               <div className={styles.commentMeta}>
                 <img
-                  src={comment.author.bio || ''}
+                  src={comment.author.image || ''}
                   className={styles.commentAvatar}
+                  alt=""
                 />
                 <Link href={`/profile/${comment.author.username}`}>
                   {comment.author.username}

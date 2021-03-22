@@ -5,21 +5,18 @@ export const articleTabs: ArticleTab[] = [
     type: 'feed',
     active: false,
     visible: false,
-    previousActive: false,
   },
   {
     name: 'Global Feed',
     type: 'global',
     active: false,
     visible: false,
-    previousActive: false,
   },
   {
     name: '',
     type: 'tag',
     active: false,
     visible: false,
-    previousActive: false,
   },
   {
     name: 'My Articles',

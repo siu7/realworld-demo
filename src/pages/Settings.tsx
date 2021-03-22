@@ -20,7 +20,7 @@ export default function Settings() {
       username: user?.username,
       email: user?.email,
       password: '',
-      bio: user?.bio,
+      bio: user?.bio || '',
       image: user?.image || '',
     },
     () => handleUpdate()

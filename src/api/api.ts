@@ -8,31 +8,36 @@ function isJSON(str: string | undefined) {
   }
 }
 
-export interface ErrorResponse {
+export interface ErrorsResponse {
   errors: {
     [key: string]: string[]
   }
 }
-
-export const handleError = (e: WretcherError): ErrorResponse['errors'] =>
+export const handleError = (e: WretcherError): ErrorsResponse['errors'] =>
   e.response
     ? e.text && isJSON(e.text)
       ? JSON.parse(e.text).errors
       : { unknown: `${e.response.status} ${e.response.statusText}` }
     : { unknown: e.toString() }
 
-function createApi() {
-  let token: string | null = localStorage.getItem('jwtToken')
-  if (token) {
-    return wretch()
-      .url('https://conduit.productionready.io/api')
-      .auth(`Token ${token}`)
-  } else {
-    return wretch().url('https://conduit.productionready.io/api')
-  }
-}
-let base = createApi()
+const base = wretch()
+  .url('https://conduit.productionready.io/api')
+  .defer((w) => {
+    // If we are hitting the route /user…
+    let token: string | null = localStorage.getItem('jwtToken')
+    if (token) {
+      return w.auth(`Token ${token}`)
+    } else return w
+  })
+//let base = createApi()
 
+export type User = {
+  email: string
+  token: string
+  username: string
+  bio: string
+  image: string | null
+}
 export type Article = {
   slug: string
   title: string
@@ -113,8 +118,8 @@ export const articles = {
 
 export type Comment = {
   id: number
-  createdAt: Date
-  updatedAt: Date
+  createdAt: string
+  updatedAt: string
   body: string
   author: Profile
 }
@@ -160,20 +165,13 @@ export const profiles = {
   getOne: async (username: string): Promise<ProfileResponse> =>
     await profileApi.url(`/${username}`).get().json(),
   followOne: async (username: string): Promise<ProfileResponse> =>
-    await profileApi.url(`/${username}`).post().json(),
+    await profileApi.url(`/${username}/follow`).post().json(),
   unfollowOne: async (username: string): Promise<ProfileResponse> =>
-    await profileApi.url(`/${username}`).delete().json(),
+    await profileApi.url(`/${username}/follow`).delete().json(),
 }
 
 let usersApi = base.url('/users')
 let userApi = base.url('/user')
-export type User = {
-  email: string
-  token: string
-  username: string
-  bio: string
-  image: string | null
-}
 export type UserResponse = {
   user: User
 }

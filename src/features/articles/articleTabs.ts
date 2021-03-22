@@ -1,15 +1,15 @@
 import type { ArticleTab } from './slice'
 export const articleTabs: ArticleTab[] = [
   {
-    name: 'Global Feed',
-    type: 'global',
+    name: 'Your Feed',
+    type: 'feed',
     active: false,
     visible: false,
     previousActive: false,
   },
   {
-    name: 'Your Feed',
-    type: 'feed',
+    name: 'Global Feed',
+    type: 'global',
     active: false,
     visible: false,
     previousActive: false,

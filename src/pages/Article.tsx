@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 import { Link, useRoute } from 'wouter'
 import { useAppDispatch, useAppSelector } from 'app/hooks'
 import { ArticleRow } from 'components/ArticleRow'
-import { isAuthedSelector } from 'features/user/selectors'
 import { getOne } from 'features/articles/slice'
 import { getMany } from 'features/comments/slice'
 import styles from './Article.module.css'
@@ -20,7 +19,7 @@ export default function Article() {
   //}
   //}, [match, params?.slug, dispatch])
 
-  const isAuthed = useAppSelector(isAuthedSelector)
+  const user = useAppSelector((state) => state.user.data)
   const article = {
     title: 'Minima omnis reprehe',
     slug: 'minima-omnis-reprehe-7mgcmp',
@@ -87,7 +86,7 @@ export default function Article() {
       )}
       <div className={styles.comments}>
         <ArticleRow article={article} />
-        {isAuthed ? (
+        {user ? (
           <input />
         ) : (
           <span>

@@ -12,7 +12,7 @@ export function ErrorsList({
     errorsList.push(msg)
   }
   return (
-    <ul>
+    <ul className={`error-messages`}>
       {errorsList.map((error: string) => (
         <li key={error}>{error}</li>
       ))}

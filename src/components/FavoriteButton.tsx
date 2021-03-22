@@ -1,6 +1,5 @@
 import { useLocation } from 'wouter'
 import { useAppDispatch, useAppSelector } from 'app/hooks'
-import { isAuthedSelector } from 'features/user/selectors'
 import { favoriteOne, unfavoriteOne } from 'features/articles/slice'
 import styles from './FavoriteButton.module.css'
 
@@ -16,7 +15,7 @@ export function FavoriteButton({
   isCompact: boolean
 }) {
   const dispatch = useAppDispatch()
-  const isAuthed = useAppSelector(isAuthedSelector)
+  const { user } = useAppSelector((state) => state.user.data)
   const [, setLocation] = useLocation()
 
   const { loading: favoriteLoading } = useAppSelector(
@@ -26,7 +25,7 @@ export function FavoriteButton({
     (state) => state.articles.unfavoriteOne
   )
   function handleFavorite(favorited: boolean, slug: string) {
-    !isAuthed
+    !user
       ? setLocation('/signup')
       : !favorited
       ? dispatch(favoriteOne(slug))
@@ -41,7 +40,7 @@ export function FavoriteButton({
     <button
       disabled={favoriteLoading || unfavoriteLoading}
       onClick={() => handleFavorite(favorited, slug)}
-      className={styles.button}
+      className={`${styles.button} ${favorited && styles.buttonFavorited}`}
     >
       <HeartSvg />
       {text}

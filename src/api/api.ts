@@ -192,6 +192,7 @@ export type SignupBody = {
 }
 export type UpdateUserBody = {
   user: {
+    [index: string]: string | undefined
     username?: string
     email?: string
     password?: string

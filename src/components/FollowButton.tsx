@@ -1,6 +1,5 @@
 import { useLocation } from 'wouter'
 import { useAppDispatch, useAppSelector } from 'app/hooks'
-import { isAuthedSelector } from 'features/user/selectors'
 import { followOne, unfollowOne } from 'features/profile/slice'
 import styles from './FollowButton.module.css'
 
@@ -12,7 +11,7 @@ export function FollowButton({
   username: string
 }) {
   const dispatch = useAppDispatch()
-  const isAuthed = useAppSelector(isAuthedSelector)
+  const { user } = useAppSelector((state) => state.user.data)
   const [, setLocation] = useLocation()
 
   const { loading: followUserLoading } = useAppSelector(
@@ -23,7 +22,7 @@ export function FollowButton({
   )
 
   function handleFollow(username: string) {
-    !isAuthed
+    !user
       ? setLocation('/signup')
       : !following
       ? dispatch(followOne(username))

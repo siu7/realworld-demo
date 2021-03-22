@@ -132,6 +132,11 @@ const articlesSlice = createSlice({
       }
       state.articleTabs[activeTabIndex].previousActive = true
     },
+    unsetPreviousActiveTab(state) {
+      for (let tab of state.articleTabs) {
+        tab.previousActive = false
+      }
+    },
     unsetTabs(state) {
       for (let tab of state.articleTabs) {
         tab.visible = false
@@ -232,7 +237,36 @@ const articlesSlice = createSlice({
       state.article = payload.article
     })
     builder.addCase(favoriteOne.fulfilled, (state, { payload }) => {
-      state.article = payload.article
+      let activeTab = state.articleTabs.find((tab) => tab.active)
+      let slug = payload.article.slug
+      let articles
+      let index = -1
+      if (activeTab?.type === 'global') {
+        articles = state.articles.articles.findIndex(
+          (article) => article.slug === slug
+        )
+      }
+      if (activeTab?.type === 'feed') {
+        articles = state.articlesFeeds.articles.findIndex(
+          (article) => article.slug === slug
+        )
+      }
+      if (activeTab?.type === 'tag') {
+        articles = state.articlesByTag.articles.findIndex(
+          (article) => article.slug === slug
+        )
+      }
+      if (activeTab?.type === 'favorited') {
+        articles = state.articlesByFavorited.articles.findIndex(
+          (article) => article.slug === slug
+        )
+      }
+      if (activeTab?.type === 'author') {
+        articles = state.articlesByAuthor.articles.findIndex(
+          (article) => article.slug === slug
+        )
+      }
+      if (index !== -1) state.article = payload.article
     })
     builder.addCase(unfavoriteOne.fulfilled, (state, { payload }) => {
       state.article = payload.article
@@ -268,6 +302,7 @@ export {
   unfavoriteOne,
 }
 export const {
+  unsetPreviousActiveTab,
   setPreviousActiveTab,
   setTagTabName,
   unsetTabsVisible,

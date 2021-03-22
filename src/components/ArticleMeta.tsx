@@ -1,6 +1,7 @@
 import { Link } from 'wouter'
 import { Profile } from 'api/api'
 import styles from './ArticleMeta.module.css'
+import { formatDate } from 'utils/formatDate'
 
 export const ArticleMeta = ({
   author,
@@ -19,25 +20,3 @@ export const ArticleMeta = ({
     </div>
   </div>
 )
-
-function formatDate(dateString: string) {
-  const d = new Date(dateString)
-  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-  const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ]
-  return `${days[d.getDay()]} ${
-    months[d.getMonth()]
-  } ${d.getDate()} ${d.getFullYear()}`
-}

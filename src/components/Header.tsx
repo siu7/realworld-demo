@@ -6,10 +6,10 @@ export default function Header() {
   const { user } = useAppSelector((state) => state.user.data)
   const { loading } = useAppSelector((state) => state.user.getCurrent)
   let linkItem = [{ to: '/', text: 'Home' }]
-  if (user.username) {
+  if (user?.username) {
     linkItem.push(
-      { to: '/settings', text: 'Settings' },
       { to: '/editor', text: 'New Article' },
+      { to: '/settings', text: 'Settings' },
       { to: `/profile/${user.username}`, text: user.username }
     )
   } else {

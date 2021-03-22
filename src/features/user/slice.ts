@@ -23,10 +23,10 @@ const getCurrent = createApiAsyncThunkWithNoArg(
 const getCurrentReducer = createExtraReducer(getCurrent)
 
 interface InitialState {
-  user: User
+  user: User | null
 }
 let initialState: InitialState = {
-  user: {} as User,
+  user: null,
 }
 function saveJwtToken(token: string) {
   localStorage.setItem('jwtToken', token)
@@ -35,7 +35,12 @@ function saveJwtToken(token: string) {
 const userSlice = createSlice({
   name: 'User',
   initialState,
-  reducers: {},
+  reducers: {
+    logout(state) {
+      state.user = null
+      localStorage.clear()
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(login.fulfilled, (state, { payload }) => {
       state.user = payload.user
@@ -46,6 +51,9 @@ const userSlice = createSlice({
       saveJwtToken(payload.user.token)
     })
     builder.addCase(getCurrent.fulfilled, (state, { payload }) => {
+      state.user = payload.user
+    })
+    builder.addCase(updateOne.fulfilled, (state, { payload }) => {
       state.user = payload.user
     })
   },
@@ -59,3 +67,4 @@ export const userReducer = combineReducers({
 })
 
 export { login, signup, updateOne, getCurrent }
+export const { logout } = userSlice.actions

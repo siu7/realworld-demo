@@ -21,11 +21,11 @@ export const createExtraReducer = <Returned, ThunkArg, ThunkApiConfig>(
       state.loading = true
     })
     builder.addCase(asyncThunk.fulfilled, (state) => {
-      delete state.loading
+      state.loading = false
     })
     builder.addCase(asyncThunk.rejected, (state, { payload }) => {
       if (payload) state.errors = payload
-      delete state.loading
+      state.loading = false
     })
   })
 

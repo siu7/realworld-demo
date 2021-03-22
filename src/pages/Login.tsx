@@ -1,8 +1,10 @@
+import { Link } from 'wouter'
 import { useAppDispatch, useAppSelector } from 'app/hooks'
 import type { LoginBody } from 'api/api'
 import { useForm } from 'utils/useForm'
 import { login } from 'features/user/slice'
 import { ErrorsList } from 'components/ErrorsList'
+import styles from './Login.module.css'
 
 export default function Login() {
   const dispatch = useAppDispatch()
@@ -24,7 +26,9 @@ export default function Login() {
 
   const { email, password } = formData
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className={`${styles.form} container`}>
+      <h1>Login</h1>
+      <Link href="/signup">Need an account? </Link>
       {errors && <ErrorsList errors={errors} />}
       <input
         type="email"
@@ -32,6 +36,8 @@ export default function Login() {
         placeholder="Email"
         value={email}
         onChange={handleInputChange}
+        required
+        disabled={loading}
       />
       <input
         type="password"
@@ -39,8 +45,10 @@ export default function Login() {
         placeholder="Password"
         value={password}
         onChange={handleInputChange}
+        required
+        disabled={loading}
       />
-      <button type="submit" disabled={loading}>
+      <button type="submit" disabled={loading} className={styles.submitButton}>
         Login
       </button>
     </form>

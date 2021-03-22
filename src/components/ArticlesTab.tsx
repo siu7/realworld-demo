@@ -22,6 +22,7 @@ export function ArticlesTab() {
     (state) => state.articles.data.getArticlesFilter
   )
   const { articleTabs } = useAppSelector((state) => state.articles.data)
+  const { user } = useAppSelector((state) => state.user.data)
   useEffect(() => {
     if (matchProfile) {
       dispatch(unsetTabs())
@@ -42,7 +43,12 @@ export function ArticlesTab() {
         (tab) => tab.previousActive
       )
       dispatch(unsetTabs())
-      dispatch(setTabVisible([0, true]))
+      if (user) {
+        dispatch(setTabVisible([0, true]))
+        dispatch(setTabVisible([1, true]))
+      } else {
+        dispatch(setTabVisible([1, true]))
+      }
       if (tag) {
         dispatch(setTagTabName(tag))
         dispatch(setTabVisible([2, true]))
@@ -50,7 +56,9 @@ export function ArticlesTab() {
       previousActiveTabIndex === -1
         ? tag
           ? dispatch(setTabActive([2, true]))
-          : dispatch(setTabActive([0, true]))
+          : user
+          ? dispatch(setTabActive([0, true]))
+          : dispatch(setTabActive([1, true]))
         : dispatch(setTabActive([previousActiveTabIndex, true]))
     }
   }, [dispatch, matchProfile, matchFavorites, matchHome, tag])

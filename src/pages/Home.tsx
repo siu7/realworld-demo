@@ -5,6 +5,7 @@ import {
   getMany,
   getArticlesByTag,
   setPreviousActiveTab,
+  getArticlesFeeds,
 } from 'features/articles/slice'
 import { getMany as getTags } from 'features/tags/slice'
 import { Banner } from 'components/Banner'
@@ -14,7 +15,7 @@ import { ArticlesTab } from 'components/ArticlesTab'
 
 export default function Home() {
   const dispatch = useAppDispatch()
-  const { articlesByTag, articles, limit } = useAppSelector(
+  const { articles, articlesByTag, articlesFeeds, limit } = useAppSelector(
     (state) => state.articles.data
   )
   useEffect(() => {
@@ -34,6 +35,22 @@ export default function Home() {
     tag,
     articlesByTag.offset,
     articlesByTag.articles.length,
+  ])
+
+  const { user } = useAppSelector((state) => state.user.data)
+  useEffect(() => {
+    if (
+      articlesFeeds.articles.length === 0 &&
+      user &&
+      articlesFeeds.articlesCount === undefined
+    )
+      dispatch(getArticlesFeeds({ offset: articlesFeeds.offset, limit }))
+  }, [
+    dispatch,
+    articlesFeeds.offset,
+    limit,
+    articlesFeeds.articles.length,
+    user,
   ])
 
   const { tags } = useAppSelector((state) => state.tags.data)
@@ -74,7 +91,7 @@ export default function Home() {
                 activeTabs?.type === 'tag'
                   ? articlesByTag
                   : activeTabs?.type === 'feed'
-                  ? articles
+                  ? articlesFeeds
                   : articles
               }
             />

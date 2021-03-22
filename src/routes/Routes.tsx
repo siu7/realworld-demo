@@ -4,7 +4,6 @@ import Login from 'pages/Login'
 import Signup from 'pages/Signup'
 import Settings from 'pages/Settings'
 import Editor from 'pages/Editor'
-import EditArticle from 'pages/Editor/EditArticle'
 import Article from 'pages/Article'
 import Profile from 'pages/Profile'
 import { useAppSelector } from 'app/hooks'
@@ -13,7 +12,7 @@ import AuthedDisabledRoute from 'routes/AuthedDisabledRoute'
 
 export function Routes() {
   const { user } = useAppSelector((state) => state.user.data)
-  const authed = user.token ? true : false
+  const authed = user?.token ? true : false
 
   return (
     <Switch>
@@ -21,11 +20,7 @@ export function Routes() {
       <AuthedDisabledRoute path="/signup" component={Signup} authed={authed} />
       <ProtectedRoute path="/settings" component={Settings} authed={authed} />
       <ProtectedRoute path="/editor" component={Editor} authed={authed} />
-      <ProtectedRoute
-        path="/editor/:slug"
-        component={EditArticle}
-        authed={authed}
-      />
+      <ProtectedRoute path="/editor/:slug" component={Editor} authed={authed} />
       <Route path="/article/:slug" component={Article} />
       <Route path="/profile/:username" component={Profile} />
       <Route path="/profile/:username/favorites" component={Profile} />

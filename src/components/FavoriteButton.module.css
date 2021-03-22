@@ -10,3 +10,12 @@
   background-color: var(--primary);
   color: white;
 }
+.buttonFavorited {
+  background-color: var(--primary);
+  color: white;
+}
+.buttonFavorited:hover {
+  background-color: #449d44;
+  border-color: #419641;
+  color: white;
+}

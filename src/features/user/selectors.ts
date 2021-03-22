@@ -4,5 +4,5 @@ import type { RootState } from 'app/store'
 const userSelector = (state: RootState) => state.user.data.user
 
 export const isAuthedSelector = createSelector(userSelector, (user) =>
-  user.username ? true : false
+  user ? true : false
 )

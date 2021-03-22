@@ -51,3 +51,27 @@ button svg {
   max-width: 1140px; /* 2 */
   padding: 0.5rem 1rem;
 }
+
+input {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.25rem;
+  border-radius: 0.3rem;
+  margin: 0;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  color: #55595c;
+}
+
+textarea {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.25rem;
+  border-radius: 0.3rem;
+  margin: 0;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  color: #55595c;
+}
+
+.error-messages {
+  color: #b85c5c !important;
+  font-weight: bold;
+  margin: 0;
+}

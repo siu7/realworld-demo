@@ -10,6 +10,10 @@ export function useForm<FormFileds extends { [key: string]: any }>(
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
+  function handleTextAreaChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    setFormData({ ...formData, [e.target.name]: e.target.value })
+  }
+
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     onSubmit()
@@ -18,6 +22,7 @@ export function useForm<FormFileds extends { [key: string]: any }>(
   return {
     formData,
     handleInputChange,
+    handleTextAreaChange,
     handleSubmit,
   }
 }

@@ -12,5 +12,6 @@
 
 - react.js
 - redux.js
+- @redux/toolkits
 - wouter - replacement of react-router
 - wretch - replacement of axios / fetch

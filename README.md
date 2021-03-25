@@ -12,6 +12,6 @@
 
 - react.js
 - redux.js
-- @redux/toolkits
-- wouter - replacement of react-router
-- wretch - replacement of axios / fetch
+- [@redux/toolkits](https://github.com/reduxjs/redux-toolkit) - official redux toolset to simplify redux's boilerplate
+- [wouter](https://github.com/molefrog/wouter) - replacement of react-router with very small footprint (i.e. bundlesize)
+- [wretch](https://github.com/elbywan/wretch) - replacement of axios / fetch and it's using Typescript

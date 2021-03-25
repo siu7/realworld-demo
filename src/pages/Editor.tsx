@@ -34,7 +34,7 @@ export default function Editor() {
   }
   const { title, description, body, tagList } = formData
   return (
-    <form onSubmit={handleSubmit} className={`${styles.form} container`}>
+    <form onSubmit={handleSubmit} className={`form mw-920 container`}>
       {errors && <ErrorsList errors={errors} />}
       <input
         type="text"

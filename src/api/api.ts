@@ -23,21 +23,12 @@ export const handleError = (e: WretcherError): ErrorsResponse['errors'] =>
 const base = wretch()
   .url('https://conduit.productionready.io/api')
   .defer((w) => {
-    // If we are hitting the route /user…
     let token: string | null = localStorage.getItem('jwtToken')
     if (token) {
       return w.auth(`Token ${token}`)
     } else return w
   })
-//let base = createApi()
 
-export type User = {
-  email: string
-  token: string
-  username: string
-  bio: string
-  image: string | null
-}
 export type Article = {
   slug: string
   title: string
@@ -172,6 +163,13 @@ export const profiles = {
 
 let usersApi = base.url('/users')
 let userApi = base.url('/user')
+export type User = {
+  email: string
+  token: string
+  username: string
+  bio: string
+  image: string | null
+}
 export type UserResponse = {
   user: User
 }

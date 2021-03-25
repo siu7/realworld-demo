@@ -2,13 +2,13 @@
   font-size: 1rem;
   border-radius: 0.25rem;
   padding: 0.5rem 1rem;
-  color: #b85c5c;
-  border-color: #b85c5c;
+  color: var(--error);
+  border-color: var(--error);
   margin-right: auto;
 }
 .logoutButton:hover {
-  background-color: #b85c5c;
-  border-color: #b85c5c;
+  background-color: rgba(var(--error), 0.8);
+  border-color: rgba(var(--error), 0.8);
   color: #fff;
 }
 .divider {

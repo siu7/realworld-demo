@@ -5,7 +5,7 @@
 }
 
 .brand {
-  color: var(--primary);
+  color: var(--color-primary);
   font-size: 1.5rem;
   margin-right: 1rem;
 }
@@ -15,8 +15,8 @@
   gap: 1rem;
 }
 .navList a {
-  color: rgba(0, 0, 0, 0.3);
+  color: var(--color-muted);
 }
 .navList a:hover {
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--color-text);
 }

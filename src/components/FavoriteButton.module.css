@@ -1,21 +1,19 @@
 .button {
-  border-color: var(--primary);
-  color: var(--primary);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
   font-size: 0.875rem;
   display: flex;
   gap: 0.25rem;
   align-items: center;
 }
-.button:hover {
-  background-color: var(--primary);
-  color: white;
-}
+.button:hover,
 .buttonFavorited {
-  background-color: var(--primary);
-  color: white;
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-white);
 }
 .buttonFavorited:hover {
-  background-color: #449d44;
-  border-color: #419641;
-  color: white;
+  background-color: var(--color-primary-darker);
+  border-color: var(--color-primary-darker);
+  color: var(--color-white);
 }

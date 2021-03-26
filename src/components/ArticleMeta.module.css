@@ -2,24 +2,18 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 0.3rem;
-}
-.avatar {
-  border-radius: 4rem;
-  height: 32px;
-  width: 32px;
-  cursor: pointer;
+  gap: 0.5rem;
 }
 .username {
   line-height: 1rem;
 }
 .username a {
   display: block;
-  color: var(--primary);
+  color: var(--color-primary);
   font-weight: 500;
 }
 .username span {
-  color: #bbb;
+  color: var(--color-text-tertiary);
   font-size: 0.8rem;
   font-weight: 300;
 }

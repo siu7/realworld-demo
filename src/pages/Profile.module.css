@@ -1,16 +1,10 @@
 .banner {
-  background: #f3f3f3;
+  background: var(--color-bg-secondary);
   display: grid;
   place-items: center;
   padding: 2rem 0;
   gap: 0.5rem;
 }
-.avatar {
-  border-radius: 4rem;
-  width: 100px;
-  height: 100px;
-}
-
 .banner h4 {
   font-size: 1.5rem;
   font-weight: 700;

@@ -9,14 +9,17 @@
   font-size: 1.5rem;
   margin-right: 1rem;
 }
+.brand:hover {
+  color: var(--color-primary-darker);
+}
 .navList {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
 .navList a {
-  color: var(--color-muted);
+  color: var(--color-text-tertiary);
 }
 .navList a:hover {
-  color: var(--color-text);
+  color: var(--color-text-primary);
 }

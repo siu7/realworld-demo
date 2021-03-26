@@ -1,12 +1,12 @@
 .button {
-  border-color: #999;
-  color: #999;
+  border-color: var(--color-text-tertiary);
+  color: var(--color-text-tertiary);
   font-size: 0.875rem;
   display: flex;
   gap: 0.25rem;
   align-items: center;
 }
 .button:hover {
-  background-color: #ccc;
-  color: white;
+  background-color: var(--color-text-tertiary);
+  color: var(--color-white);
 }

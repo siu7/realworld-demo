@@ -1,0 +1,16 @@
+.avatar {
+  border-radius: 4rem;
+  cursor: pointer;
+}
+.avatarSmall {
+  width: 2rem;
+  height: 2rem;
+}
+.avatarNormal {
+  width: 4rem;
+  height: 4rem;
+}
+.avatarLarge {
+  width: 6rem;
+  height: 6rem;
+}

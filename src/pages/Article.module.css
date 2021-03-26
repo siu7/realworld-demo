@@ -1,11 +1,8 @@
-.wrapper {
-  background: #333;
-}
-
 .banner {
   padding-top: 2rem;
   padding-bottom: 2rem;
-  color: white;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -13,36 +10,36 @@
 .banner h1 {
   font-size: 2.8rem;
   font-weight: 600;
-  text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
 }
 .content {
   padding-top: 2rem;
   padding-bottom: 2rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid var(--color-border-primary);
   font-size: 1.2rem;
 }
 .comments {
-  padding: 2rem 0;
+  padding: 2rem 1rem;
   margin-right: auto; /* 1 */
   margin-left: auto; /* 1 */
-  max-width: 450px;
+  max-width: 700px;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .comments a {
-  color: var(--primary);
+  color: var(--color-primary);
 }
 .comments a:hover {
   text-decoration: underline;
 }
 .comments span {
   margin-top: 1rem;
+  color: var(--color-text-secondary);
 }
 
 .comment {
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--color-border-primary);
   border-radius: 0.25rem;
 }
 .commentBody {
@@ -52,20 +49,35 @@
 .commentMeta {
   display: flex;
   flex-direction: row;
-  gap: 0.5rem;
   align-items: center;
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   padding: 0.75rem 1.25rem;
-  background-color: #f5f5f5;
+  background-color: var(--color-bg-secondary);
+  gap: 1rem;
 }
+
 .commentMeta img {
   width: 20px;
   height: 20px;
   border-radius: 4rem;
 }
 .commentMeta span {
-  color: #bbb;
+  color: var(--color-text-secondary);
   font-size: 0.8rem;
   font-weight: 300;
   margin: 0;
+}
+
+.commentForm textarea {
+  width: 100%;
+  border: 0px;
+}
+.commentFormMeta {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+  padding: 0.75rem 1.25rem;
+  background-color: var(--color-bg-secondary);
 }

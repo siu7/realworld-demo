@@ -6,6 +6,8 @@ import { getOne } from 'features/articles/slice'
 import { getMany } from 'features/comments/slice'
 import styles from './Article.module.css'
 import { formatDate } from 'utils/formatDate'
+import type { Comment } from 'api/api'
+import { Avatar } from 'components/Avatar'
 
 export default function Article() {
   const dispatch = useAppDispatch()
@@ -20,9 +22,16 @@ export default function Article() {
   }, [match, params?.slug, dispatch])
 
   const { user } = useAppSelector((state) => state.user.data)
+  const { loading: getArticleLoading } = useAppSelector(
+    (state) => state.articles.getOne
+  )
+  const { loading: getCommentsLoading } = useAppSelector(
+    (state) => state.comments.getMany
+  )
+  const loading = getArticleLoading || getCommentsLoading
   return (
     <>
-      {article && (
+      {!loading && article && (
         <>
           <div className={styles.wrapper}>
             <div className={`${styles.banner} container`}>
@@ -38,49 +47,56 @@ export default function Article() {
               ))}
             </div>
           </div>
+          <div className={`${styles.comments} container mx-700`}>
+            {article && <ArticleRow article={article} />}
+            {user ? <PostCommentForm avatar={user.image} /> : <UnAuthSpan />}
+            {comments && <CommentsList comments={comments} />}
+          </div>
         </>
       )}
-      <div className={styles.comments}>
-        {article && <ArticleRow article={article} />}
-        {user ? (
-          <div className={styles.comment}>
-            <div className={styles.commentBody}>
-              <input />
-            </div>
-            <div className={styles.commentMeta}>
-              <img
-                src={user.image || ''}
-                className={styles.commentAvatar}
-                alt=""
-              />
-              <button className={styles.submit}>Post Comment</button>
-            </div>
-          </div>
-        ) : (
-          <span>
-            <Link href="/login">login</Link>
-            {' or '}
-            <Link href="/signup">sign up</Link> to add comments on this article.
-          </span>
-        )}
-        {comments &&
-          comments.map((comment) => (
-            <div className={styles.comment} key={comment.id}>
-              <div className={styles.commentBody}>{comment.body}</div>
-              <div className={styles.commentMeta}>
-                <img
-                  src={comment.author.image || ''}
-                  className={styles.commentAvatar}
-                  alt=""
-                />
-                <Link href={`/profile/${comment.author.username}`}>
-                  {comment.author.username}
-                </Link>
-                <span>{formatDate(comment.createdAt)}</span>
-              </div>
-            </div>
-          ))}
-      </div>
     </>
   )
 }
+
+const UnAuthSpan = () => (
+  <span>
+    <Link href="/login">login</Link>
+    {' or '}
+    <Link href="/signup">sign up</Link> to add comments on this article.
+  </span>
+)
+
+const PostCommentForm = ({ avatar }: { avatar: string | null }) => {
+  return (
+    <div className={styles.commentForm}>
+      <textarea />
+      <div className={styles.commentFormMeta}>
+        <img src={avatar || ''} className={styles.commentAvatar} alt="" />
+        <button className={`primary-btn ${styles.submitButton}`}>
+          Post Comment
+        </button>
+      </div>
+    </div>
+  )
+}
+
+const CommentsList = ({ comments }: { comments: Comment[] }) => (
+  <>
+    {comments.map((comment) => (
+      <div className={styles.comment} key={comment.id}>
+        <div className={styles.commentBody}>{comment.body}</div>
+        <div className={styles.commentMeta}>
+          <img
+            src={comment.author.image || ''}
+            className={styles.commentAvatar}
+            alt=""
+          />
+          <Link href={`/profile/${comment.author.username}`}>
+            {comment.author.username}
+          </Link>
+          <span>{formatDate(comment.createdAt)}</span>
+        </div>
+      </div>
+    ))}
+  </>
+)

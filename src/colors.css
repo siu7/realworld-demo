@@ -1,0 +1,17 @@
+:root {
+  --color-white: white;
+  --color-black: black;
+  --color-primary: #5cb85c;
+  --color-primary-darker: #3d8b3d;
+  --color-danger: #d73a49;
+
+  --color-text-primary: hsl(0, 0%, 5%);
+  --color-text-secondary: hsl(0, 0%, 25%);
+  --color-text-tertiary: hsl(0, 0%, 45%);
+  --color-border-primary: hsl(0, 0%, 80%);
+  --color-border-secondary: hsl(0, 0%, 90%);
+  --color-bg-primary: hsl(0, 0%, 99%);
+  --color-bg-secondary: hsl(0, 0%, 95%);
+  --color-bg-reverse: hsl(0, 0%, 45%);
+  --color-bg-reverse-darker: hsl(0, 0%, 35%);
+}

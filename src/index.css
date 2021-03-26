@@ -1,23 +1,22 @@
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial,
+    sans-serif, Apple Color Emoji, Segoe UI Emoji;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: var(--color-text);
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-primary);
 }
 
 *:hover {
   transition: all 0.2s;
 }
-h1 {
-  font-size: 3.5rem;
-  line-height: 1.1;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: 1.25;
 }
 
 a {
@@ -33,15 +32,32 @@ a:active {
 button {
   text-decoration: none;
   background: none;
-  border-radius: 0.25rem;
+  border-radius: 0.5rem;
   border: 1px solid transparent;
   padding: 0.25rem 0.5rem;
   cursor: pointer;
   line-height: 1.25;
+  font-weight: 500;
 }
 button svg {
   width: 1rem;
   height: 1rem;
+}
+
+input,
+textarea {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.25rem;
+  border-radius: 0.3rem;
+  margin: 0;
+  border: 1px solid var(--color-border-primary);
+  color: var(--color-text-tertiary);
+  background-color: var(--color-bg-primary);
+}
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
 }
 
 .container {
@@ -51,26 +67,8 @@ button svg {
   padding: 0.5rem 1rem;
 }
 
-input {
-  padding: 0.75rem 1.5rem;
-  font-size: 1.25rem;
-  border-radius: 0.3rem;
-  margin: 0;
-  border: 1px solid var(--color-muted);
-  color: #55595c;
-}
-
-textarea {
-  padding: 0.75rem 1.5rem;
-  font-size: 1.25rem;
-  border-radius: 0.3rem;
-  margin: 0;
-  border: 1px solid var(--color-muted);
-  color: #55595c;
-}
-
 .error-messages {
-  color: var(--color-accent);
+  color: var(--color-danger);
   font-weight: bold;
   margin: 0;
 }
@@ -90,7 +88,15 @@ textarea {
   flex-direction: column;
   gap: 1rem;
 }
-h1 {
-  font-size: 2.5rem;
-  font-weight: 500;
+.primary-btn {
+  color: var(--color-white);
+  background-color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+}
+.primary-btn:hover {
+  background-color: var(--color-primary-darker);
+  border-color: var(--color-primary-darker);
+}
+.primary-btn:disabled {
+  filter: brightness(0.75);
 }

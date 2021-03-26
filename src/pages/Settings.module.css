@@ -2,14 +2,14 @@
   font-size: 1rem;
   border-radius: 0.25rem;
   padding: 0.5rem 1rem;
-  color: var(--error);
-  border-color: var(--error);
+  color: var(--color-danger-primary);
+  border-color: var(--color-danger-primary);
   margin-right: auto;
 }
 .logoutButton:hover {
-  background-color: rgba(var(--error), 0.8);
-  border-color: rgba(var(--error), 0.8);
-  color: #fff;
+  background-color: var(--color-danger-primary-darker);
+  border-color: var(--color-danger-primary-darker);
+  color: var(--color-white);
 }
 .divider {
   width: 100%;

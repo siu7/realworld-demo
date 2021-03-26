@@ -33,13 +33,19 @@ export default function Home() {
     if (tags.length === 0) dispatch(getTags())
   }, [dispatch, tags])
 
-  const { loading } = useAppSelector((state) => state.articles.getMany)
+  const { loading: getManyLoading } = useAppSelector(
+    (state) => state.articles.getMany
+  )
+  const { loading: getArticlesFeedsLoading } = useAppSelector(
+    (state) => state.articles.getArticlesFeeds
+  )
+  const loading = getManyLoading || getArticlesFeedsLoading
 
   return (
     <div>
       <Banner>
         <h1>conduit</h1>
-        <p>A place to share your knowledge.</p>
+        <h3>A place to share your knowledge.</h3>
       </Banner>
       <div className={`container ${styles.grid}`}>
         <div className={styles.articles}>

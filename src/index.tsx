@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import 'modern-css-reset'
 import './index.css'
-import './theme.css'
+import './colors.css'
 import App from 'App'
 import { store } from './app/store'
 

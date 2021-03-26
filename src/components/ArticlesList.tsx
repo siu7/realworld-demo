@@ -45,9 +45,7 @@ export function ArticlesList() {
                 <p>{description}</p>
               </Link>
               <div className={styles.bottom}>
-                <Link href={`/article/${slug}`} className={styles.content}>
-                  Read more...
-                </Link>
+                <Link href={`/article/${slug}`}>Read more...</Link>
 
                 <div className={styles.tags}>
                   {tagList.map((tag) => (

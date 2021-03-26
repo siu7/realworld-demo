@@ -58,7 +58,11 @@ export default function Signup() {
         required
         disabled={loading}
       />
-      <button type="submit" disabled={loading} className={styles.submitButton}>
+      <button
+        type="submit"
+        disabled={loading}
+        className={`${styles.submitButton} primary-btn`}
+      >
         Signup
       </button>
     </form>

@@ -7,6 +7,7 @@ import { FollowButton } from 'components/FollowButton'
 import { ArticlesList } from 'components/ArticlesList'
 import styles from './Profile.module.css'
 import { ArticlesTab } from 'components/ArticlesTab'
+import { Avatar } from 'components/Avatar'
 
 export default function Profile() {
   const dispatch = useAppDispatch()
@@ -36,11 +37,11 @@ export default function Profile() {
 
   const { profile } = useAppSelector((state) => state.profile.data)
   const { loading } = useAppSelector((state) => state.profile.getOne)
-  const { username, following, image, bio } = profile
+  const { username, following, bio } = profile
   return (
     <div>
       <div className={styles.banner}>
-        <img src={!loading ? image : ''} className={styles.avatar} alt="" />
+        <Avatar profile={profile} variant="large" />
         <h4>{!loading ? username : 'loading...'}</h4>
         {bio && <p>{bio}</p>}
         <FollowButton following={following} username={username} />

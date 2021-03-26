@@ -1,6 +1,6 @@
 .wrapper {
   padding: 5px 10px 10px 10px;
-  background: #f3f3f3;
+  background: var(--color-bg-secondary);
   border-radius: 4px;
 }
 .wrapper p {
@@ -14,12 +14,12 @@
 }
 .tagsList span {
   cursor: pointer;
-  background-color: #818a91;
-  color: white;
+  background-color: var(--color-bg-reverse);
+  color: var(--color-white);
   font-size: 0.8rem;
   padding: 0.2rem 0.6rem;
   border-radius: 4rem;
 }
-.tagsList span :hover {
-  background-color: #687077;
+.tagsList span:hover {
+  filter: brightness(0.8);
 }

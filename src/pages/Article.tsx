@@ -8,6 +8,7 @@ import styles from './Article.module.css'
 import { formatDate } from 'utils/formatDate'
 import type { Comment } from 'api/api'
 import { Avatar } from 'components/Avatar'
+import { ArticleTags } from 'components/ArticlesList'
 
 export default function Article() {
   const dispatch = useAppDispatch()
@@ -41,11 +42,7 @@ export default function Article() {
           </div>
           <div className={`container ${styles.content}`}>
             <article>{article.body}</article>
-            <div className={styles.tags}>
-              {article.tagList.map((tag) => (
-                <span key={`${article.slug}: ${tag}`}>{tag}</span>
-              ))}
-            </div>
+            <ArticleTags tags={article.tagList} slug={article.slug} />
           </div>
           <div className={`${styles.comments} container mx-700`}>
             {article && <ArticleRow article={article} />}

@@ -46,12 +46,7 @@ export function ArticlesList() {
               </Link>
               <div className={styles.bottom}>
                 <Link href={`/article/${slug}`}>Read more...</Link>
-
-                <div className={styles.tags}>
-                  {tagList.map((tag) => (
-                    <span key={`${slug}: ${tag}`}>{tag}</span>
-                  ))}
-                </div>
+                <ArticleTags tags={tagList} slug={slug} />
               </div>
             </div>
           )
@@ -97,3 +92,17 @@ function Pagination({
     </ul>
   )
 }
+
+export const ArticleTags = ({
+  tags,
+  slug,
+}: {
+  tags: string[]
+  slug: string
+}) => (
+  <div className={styles.tags}>
+    {tags.map((tag) => (
+      <span key={`${slug}: ${tag}`}>{tag}</span>
+    ))}
+  </div>
+)

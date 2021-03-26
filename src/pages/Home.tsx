@@ -45,7 +45,7 @@ export default function Home() {
     <div>
       <Banner>
         <h1>conduit</h1>
-        <h3>A place to share your knowledge.</h3>
+        <h2>A place to share your knowledge.</h2>
       </Banner>
       <div className={`container ${styles.grid}`}>
         <div className={styles.articles}>

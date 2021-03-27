@@ -68,6 +68,11 @@ const articlesSlice = createSlice({
   name: 'articles',
   initialState,
   reducers: {
+    unsetArticle(state) {
+      state.articles = []
+      delete state.articlesCount
+      state.offset = 0
+    },
     setTab(
       state,
       { payload }: PayloadAction<{ index: number; tab: ArticleTab }>
@@ -137,6 +142,9 @@ const articlesSlice = createSlice({
     },
     setTag(state, { payload }: PayloadAction<string>) {
       state.getArticlesFilter.tag = payload
+      state.articles = []
+      delete state.articlesCount
+      state.offset = 0
     },
     setAuthor(state, { payload }: PayloadAction<string>) {
       state.getArticlesFilter.author = payload
@@ -146,11 +154,6 @@ const articlesSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(getMany.pending, (state) => {
-      state.articles = []
-      delete state.articlesCount
-      state.offset = 0
-    })
     builder.addCase(getMany.fulfilled, (state, { payload }) => {
       state.articles = payload.articles
       state.articlesCount = payload.articlesCount
@@ -174,20 +177,20 @@ const articlesSlice = createSlice({
         (article) => article.slug === payload.article.slug
       )
       if (index !== -1) {
-        state.articles[index].favorited = true
+        state.articles[index] = payload.article
       }
       if (state.article?.slug === payload.article.slug)
-        state.article.favorited = true
+        state.article = payload.article
     })
     builder.addCase(unfavoriteOne.fulfilled, (state, { payload }) => {
       let index = state.articles.findIndex(
         (article) => article.slug === payload.article.slug
       )
       if (index !== -1) {
-        state.articles[index].favorited = false
+        state.articles[index] = payload.article
       }
       if (state.article?.slug === payload.article.slug)
-        state.article.favorited = false
+        state.article = payload.article
     })
   },
 })
@@ -214,6 +217,7 @@ export {
   unfavoriteOne,
 }
 export const {
+  unsetArticle,
   setTagTabName,
   unsetTabsVisible,
   unsetTabsActive,

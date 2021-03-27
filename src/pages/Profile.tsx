@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useRoute, Link } from 'wouter'
 import { useAppDispatch, useAppSelector } from 'app/hooks'
 import { getOne } from 'features/profile/slice'
-import { getMany } from 'features/articles/slice'
+import { getMany, unsetArticle } from 'features/articles/slice'
 import { FollowButton } from 'components/FollowButton'
 import { ArticlesList } from 'components/ArticlesList'
 import styles from './Profile.module.css'
@@ -40,6 +40,11 @@ export default function Profile() {
   const { profile } = useAppSelector((state) => state.profile.data)
   const { loading } = useAppSelector((state) => state.profile.getOne)
 
+  useEffect(() => {
+    return () => {
+      dispatch(unsetArticle())
+    }
+  }, [])
   //const { username, following, bio } = profile
   let username = selfProfile ? user?.username : profile.username
   let bio = selfProfile ? user?.bio : profile.bio

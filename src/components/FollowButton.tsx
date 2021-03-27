@@ -32,7 +32,7 @@ export function FollowButton({
     <button
       disabled={followUserLoading || unfollowUserLoading}
       onClick={() => handleFollow(username)}
-      className={styles.button}
+      className={`${styles.button} ${following && styles.buttonFollowing}`}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

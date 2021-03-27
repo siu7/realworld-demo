@@ -10,9 +10,11 @@ import { deleteOne } from 'features/articles/slice'
 export function ArticleRow({
   article,
   selfArticle,
+  following,
 }: {
   article: Article
   selfArticle: boolean
+  following: boolean
 }) {
   const { author, createdAt, favoritesCount, favorited, slug } = article
 
@@ -26,10 +28,7 @@ export function ArticleRow({
         </>
       ) : (
         <>
-          <FollowButton
-            following={author.following}
-            username={author.username}
-          />
+          <FollowButton following={following} username={author.username} />
           <FavoriteButton
             favorited={favorited}
             slug={slug}

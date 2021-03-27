@@ -1,7 +1,11 @@
 import { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from 'app/hooks'
 import { ArticlesList } from 'components/ArticlesList'
-import { getMany, getArticlesFeeds } from 'features/articles/slice'
+import {
+  getMany,
+  getArticlesFeeds,
+  unsetArticle,
+} from 'features/articles/slice'
 import { getMany as getTags } from 'features/tags/slice'
 import { Banner } from 'components/Banner'
 import { TagsList } from 'components/TagsList'
@@ -40,6 +44,11 @@ export default function Home() {
     (state) => state.articles.getArticlesFeeds
   )
   const loading = getManyLoading || getArticlesFeedsLoading
+  useEffect(() => {
+    return () => {
+      dispatch(unsetArticle())
+    }
+  }, [])
 
   return (
     <div>

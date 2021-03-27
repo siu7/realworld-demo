@@ -20,6 +20,7 @@ export default function Article() {
   const dispatch = useAppDispatch()
   const { article } = useAppSelector((state) => state.articles.data)
   const { comments } = useAppSelector((state) => state.comments.data)
+  const { profile } = useAppSelector((state) => state.profile.data)
   const [match, params] = useRoute('/article/:slug')
   useEffect(() => {
     if (match && params?.slug) {
@@ -44,7 +45,11 @@ export default function Article() {
           <div className={styles.wrapper}>
             <div className={`${styles.banner} container`}>
               <h1>{article.title}</h1>
-              <ArticleRow article={article} selfArticle={selfArticle} />
+              <ArticleRow
+                article={article}
+                selfArticle={selfArticle}
+                following={profile.following}
+              />
             </div>
           </div>
           <div className={`container ${styles.content}`}>
@@ -53,7 +58,11 @@ export default function Article() {
           </div>
           <div className={`${styles.comments} container mx-700`}>
             {article && (
-              <ArticleRow article={article} selfArticle={selfArticle} />
+              <ArticleRow
+                article={article}
+                selfArticle={selfArticle}
+                following={profile.following}
+              />
             )}
             {user ? (
               <PostCommentForm

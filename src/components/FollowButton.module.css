@@ -10,3 +10,10 @@
   background-color: var(--color-text-tertiary);
   color: var(--color-white);
 }
+.buttonFollowing {
+  background-color: var(--color-text-tertiary);
+  color: var(--color-white);
+}
+.buttonFollowing:hover {
+  background-color: var(--color-text-secondary);
+}

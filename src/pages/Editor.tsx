@@ -41,7 +41,7 @@ export default function Editor() {
   )
   const [updated, setUpdated] = useState(false)
   useEffect(() => {
-    if (article && !updated) {
+    if (article && !updated && updatingArticle) {
       setFormData({
         title: article.title,
         description: article.description,
@@ -50,7 +50,7 @@ export default function Editor() {
       })
       setUpdated(true)
     }
-  }, [article, updated, setUpdated, setFormData])
+  }, [article, updated, setUpdated, setFormData, updatingArticle])
 
   async function handleCreateOrUpdate() {
     let tmp = JSON.parse(JSON.stringify(formData))

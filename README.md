@@ -8,6 +8,14 @@
 
 ### [Demo](https://realworld-demo-siu7.vercel.app/)&nbsp;&nbsp;&nbsp;&nbsp;[RealWorld](https://github.com/gothinkster/realworld)
 
+## Difference between this project and the original redux
+
+- Using Typescript!
+- Using Redux-toolkits!
+- Changed color theme for better accessibility
+- A little bit better in mobile layout
+- Using custom css modules instead of bootstrap
+
 ## Libraries used
 
 - react.js

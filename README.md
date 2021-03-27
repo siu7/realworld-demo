@@ -10,8 +10,8 @@
 
 ## Difference between this project and the original redux
 
-- Using Typescript!
-- Using Redux-toolkits!
+- Using typescript!
+- Using @redux/toolkits!
 - Changed color theme for better accessibility
 - A little bit better in mobile layout
 - Using custom css modules instead of bootstrap

@@ -10,3 +10,29 @@
 /*.row div {*/
 /*margin-right: 1rem;*/
 /*}*/
+
+.editArticleButton {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--color-text-tertiary);
+  border-color: var(--color-text-tertiary);
+}
+.editArticleButton:hover {
+  color: var(--color-white);
+  background-color: var(--color-text-tertiary);
+}
+
+.deleteArticleButton {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+.deleteArticleButton:hover {
+  color: var(--color-white);
+  background-color: var(--color-danger);
+}

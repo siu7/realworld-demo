@@ -12,7 +12,11 @@ export const ArticleMeta = ({
   createdAt: string
 }) => (
   <div className={styles.meta}>
-    <Avatar profile={author} variant="small" />
+    <Avatar
+      username={author.username}
+      imageUrl={author.image}
+      variant="small"
+    />
     <div className={styles.username}>
       <Link href={`/profile/${author.username}`}>{author.username}</Link>
       <span>{formatDate(createdAt)}</span>

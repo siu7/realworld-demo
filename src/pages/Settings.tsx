@@ -40,7 +40,7 @@ export default function Settings() {
   const { username, email, password, bio, image } = formData
   return (
     <>
-      <form onSubmit={handleSubmit} className={`${styles.form} container`}>
+      <form onSubmit={handleSubmit} className={`${styles.form} container mw-3`}>
         <h1>Your Settings</h1>
         {errors && <ErrorsList errors={errors} />}
         <input
@@ -87,12 +87,12 @@ export default function Settings() {
         <button
           type="submit"
           disabled={loading}
-          className={styles.submitButton}
+          className={`primary-btn ${styles.submitButton}`}
         >
           Update Settings
         </button>
       </form>
-      <div className={`${styles.form} container`}>
+      <div className={`${styles.form} container mw-3`}>
         <hr className={stylesEditor.divider} />
         <button
           onClick={() => dispatch(logout())}

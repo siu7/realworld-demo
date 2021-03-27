@@ -8,7 +8,7 @@ body {
 }
 
 *:hover {
-  transition: all 0.2s;
+  transition: all 0.15s;
 }
 h1,
 h2,
@@ -50,14 +50,20 @@ textarea {
   font-size: 1.25rem;
   border-radius: 0.3rem;
   margin: 0;
-  border: 1px solid var(--color-border-primary);
-  color: var(--color-text-tertiary);
+  border: 2px solid var(--color-border-primary);
+  color: var(--color-text-secondary);
   background-color: var(--color-bg-primary);
+}
+textarea {
+  font-size: 1rem;
 }
 input:focus,
 textarea:focus {
   outline: none;
   border-color: var(--color-primary);
+}
+article {
+  white-space: pre-line;
 }
 
 .container {
@@ -73,14 +79,20 @@ textarea:focus {
   margin: 0;
 }
 
-.mw-540 {
-  max-width: 540px;
+.mw-1 {
+  max-width: 10rem;
 }
-.mw-720 {
-  max-width: 720px;
+.mw-2 {
+  max-width: 20rem;
 }
-.mw-920 {
-  max-width: 920px;
+.mw-3 {
+  max-width: 30rem;
+}
+.mw-4 {
+  max-width: 40rem;
+}
+.mw-5 {
+  max-width: 50rem;
 }
 
 .form {

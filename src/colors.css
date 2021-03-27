@@ -1,9 +1,10 @@
 :root {
   --color-white: white;
   --color-black: black;
-  --color-primary: #5cb85c;
-  --color-primary-darker: #3d8b3d;
+  --color-primary: #22863a;
+  --color-primary-darker: #176f2c;
   --color-danger: #d73a49;
+  --color-danger-darker: #cb2431;
 
   --color-text-primary: hsl(0, 0%, 5%);
   --color-text-secondary: hsl(0, 0%, 25%);
@@ -12,6 +13,24 @@
   --color-border-secondary: hsl(0, 0%, 90%);
   --color-bg-primary: hsl(0, 0%, 99%);
   --color-bg-secondary: hsl(0, 0%, 95%);
+  --color-bg-tertiary: hsl(0, 0%, 85%);
   --color-bg-reverse: hsl(0, 0%, 45%);
   --color-bg-reverse-darker: hsl(0, 0%, 35%);
 }
+/*:root {*/
+/*--color-white: white;*/
+/*--color-black: black;*/
+/*--color-primary: #5cb85c;*/
+/*--color-primary-darker: #449d44;*/
+/*--color-danger: #d73a49;*/
+
+/*--color-text-primary: hsl(0, 0%, 95%);*/
+/*--color-text-secondary: hsl(0, 0%, 80%);*/
+/*--color-text-tertiary: hsl(0, 0%, 65%);*/
+/*--color-border-primary: hsl(0, 0%, 20%);*/
+/*--color-border-secondary: hsl(0, 0%, 30%);*/
+/*--color-bg-primary: hsl(0, 0%, 5%);*/
+/*--color-bg-secondary: hsl(0, 0%, 10%);*/
+/*--color-bg-reverse: hsl(0, 0%, 20%);*/
+/*--color-bg-reverse-darker: hsl(0, 0%, 30%);*/
+/*}*/

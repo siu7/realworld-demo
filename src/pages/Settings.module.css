@@ -2,13 +2,13 @@
   font-size: 1rem;
   border-radius: 0.25rem;
   padding: 0.5rem 1rem;
-  color: var(--color-danger-primary);
-  border-color: var(--color-danger-primary);
+  color: var(--color-danger);
+  border-color: var(--color-danger);
   margin-right: auto;
 }
 .logoutButton:hover {
-  background-color: var(--color-danger-primary-darker);
-  border-color: var(--color-danger-primary-darker);
+  background-color: var(--color-danger-darker);
+  border-color: var(--color-danger-darker);
   color: var(--color-white);
 }
 .divider {

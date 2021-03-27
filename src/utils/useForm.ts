@@ -19,10 +19,16 @@ export function useForm<FormFileds extends { [key: string]: any }>(
     onSubmit()
   }
 
+  function resetForm() {
+    setFormData(initialState)
+  }
+
   return {
     formData,
+    setFormData,
     handleInputChange,
     handleTextAreaChange,
     handleSubmit,
+    resetForm,
   }
 }

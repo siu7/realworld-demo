@@ -1,18 +1,30 @@
+import { useEffect, useState } from 'react'
+import { useLocation, useRoute } from 'wouter'
 import { useAppDispatch, useAppSelector } from 'app/hooks'
-import type { UpdateArticleBody, CreateArticleBody } from 'api/api'
+import type { CreateArticleBody } from 'api/api'
 import { useForm } from 'utils/useForm'
-import { updateOne, createOne } from 'features/articles/slice'
+import { updateOne, createOne, getOne } from 'features/articles/slice'
 import { ErrorsList } from 'components/ErrorsList'
 import styles from './Login.module.css'
 
 export default function Editor() {
   const dispatch = useAppDispatch()
+  const [, setLocation] = useLocation()
+  const [, params] = useRoute('/editor/:slug')
+  useEffect(() => {
+    if (params?.slug) dispatch(getOne(params?.slug))
+  }, [dispatch, params?.slug])
+
   const { loading, errors } = useAppSelector(
     (state) => state.articles.createOne
   )
-  //const { article } = useAppSelector((state) => state.articles.data)
+  const { article } = useAppSelector((state) => state.articles.data)
+  const { user } = useAppSelector((state) => state.user.data)
+  const updatingArticle = article?.author.username === user?.username
+
   const {
     formData,
+    setFormData,
     handleInputChange,
     handleSubmit,
     handleTextAreaChange,
@@ -25,16 +37,33 @@ export default function Editor() {
       body: '',
       tagList: '',
     },
-    () => handleCreate()
+    () => handleCreateOrUpdate()
   )
-  function handleCreate() {
+  const [updated, setUpdated] = useState(false)
+  useEffect(() => {
+    if (article && !updated) {
+      setFormData({
+        title: article.title,
+        description: article.description,
+        body: article.body,
+        tagList: article.tagList.toString(),
+      })
+      setUpdated(true)
+    }
+  }, [article, updated, setUpdated, setFormData])
+
+  async function handleCreateOrUpdate() {
     let tmp = JSON.parse(JSON.stringify(formData))
     tmp.tagList = formData.tagList.split(',').map((item) => item.trim())
-    dispatch(createOne(tmp))
+    updatingArticle && article
+      ? await dispatch(updateOne({ slug: article.slug, body: tmp }))
+      : await dispatch(createOne(tmp))
+    setLocation(`/profile/${user?.username}`)
   }
   const { title, description, body, tagList } = formData
+
   return (
-    <form onSubmit={handleSubmit} className={`form mw-920 container`}>
+    <form onSubmit={handleSubmit} className={`form mw-4 container`}>
       {errors && <ErrorsList errors={errors} />}
       <input
         type="text"
@@ -69,10 +98,13 @@ export default function Editor() {
         placeholder="Enter tags"
         value={tagList}
         onChange={handleInputChange}
-        required
         disabled={loading}
       />
-      <button type="submit" disabled={loading} className={styles.submitButton}>
+      <button
+        type="submit"
+        disabled={loading}
+        className={`${styles.submitButton} primary-btn`}
+      >
         Publish Article
       </button>
     </form>

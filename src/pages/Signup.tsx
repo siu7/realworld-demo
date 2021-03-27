@@ -27,7 +27,7 @@ export default function Signup() {
 
   const { username, email, password } = formData
   return (
-    <form onSubmit={handleSubmit} className={`${styles.form} container`}>
+    <form onSubmit={handleSubmit} className={`${styles.form} container mw-3`}>
       <h1>Signup</h1>
       <Link href="/login">Have an account? </Link>
       {errors && <ErrorsList errors={errors} />}

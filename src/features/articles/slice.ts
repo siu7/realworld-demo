@@ -79,6 +79,9 @@ const articlesSlice = createSlice({
       { payload }: PayloadAction<[index: number, active: boolean]>
     ) {
       state.articleTabs[payload[0]].active = payload[1]
+      state.articles = []
+      delete state.articlesCount
+      state.offset = 0
     },
     setTabVisible(
       state,
@@ -143,6 +146,11 @@ const articlesSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(getMany.pending, (state) => {
+      state.articles = []
+      delete state.articlesCount
+      state.offset = 0
+    })
     builder.addCase(getMany.fulfilled, (state, { payload }) => {
       state.articles = payload.articles
       state.articlesCount = payload.articlesCount

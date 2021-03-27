@@ -3,12 +3,18 @@ import { Link, useRoute } from 'wouter'
 import { useAppDispatch, useAppSelector } from 'app/hooks'
 import { ArticleRow } from 'components/ArticleRow'
 import { getOne } from 'features/articles/slice'
-import { getMany } from 'features/comments/slice'
+import {
+  getMany,
+  createOne,
+  deleteOne,
+  deleteComment,
+} from 'features/comments/slice'
 import styles from './Article.module.css'
 import { formatDate } from 'utils/formatDate'
-import type { Comment } from 'api/api'
+import type { Comment, CreateCommentBody } from 'api/api'
 import { Avatar } from 'components/Avatar'
 import { ArticleTags } from 'components/ArticlesList'
+import { useForm } from 'utils/useForm'
 
 export default function Article() {
   const dispatch = useAppDispatch()
@@ -30,6 +36,7 @@ export default function Article() {
     (state) => state.comments.getMany
   )
   const loading = getArticleLoading || getCommentsLoading
+  const selfArticle = user?.username === article?.author.username
   return (
     <>
       {!loading && article && (
@@ -37,7 +44,7 @@ export default function Article() {
           <div className={styles.wrapper}>
             <div className={`${styles.banner} container`}>
               <h1>{article.title}</h1>
-              <ArticleRow article={article} />
+              <ArticleRow article={article} selfArticle={selfArticle} />
             </div>
           </div>
           <div className={`container ${styles.content}`}>
@@ -45,9 +52,21 @@ export default function Article() {
             <ArticleTags tags={article.tagList} slug={article.slug} />
           </div>
           <div className={`${styles.comments} container mx-700`}>
-            {article && <ArticleRow article={article} />}
-            {user ? <PostCommentForm avatar={user.image} /> : <UnAuthSpan />}
-            {comments && <CommentsList comments={comments} />}
+            {article && (
+              <ArticleRow article={article} selfArticle={selfArticle} />
+            )}
+            {user ? (
+              <PostCommentForm
+                username={user.username}
+                imageUrl={user.image || ''}
+                slug={article.slug}
+              />
+            ) : (
+              <UnAuthSpan />
+            )}
+            {comments && (
+              <CommentsList comments={comments} slug={article.slug} />
+            )}
           </div>
         </>
       )}
@@ -63,37 +82,108 @@ const UnAuthSpan = () => (
   </span>
 )
 
-const PostCommentForm = ({ avatar }: { avatar: string | null }) => {
+function PostCommentForm({
+  username,
+  imageUrl,
+  slug,
+}: {
+  username: string
+  imageUrl: string
+  slug: string
+}) {
+  const dispatch = useAppDispatch()
+  const { formData, handleTextAreaChange, handleSubmit, resetForm } = useForm<
+    CreateCommentBody['comment']
+  >(
+    {
+      body: '',
+    },
+    () => handleFormSubmit()
+  )
+  async function handleFormSubmit() {
+    await dispatch(
+      createOne({
+        slug,
+        body: {
+          comment: formData,
+        },
+      })
+    )
+    resetForm()
+  }
+
+  const { body } = formData
   return (
     <div className={styles.commentForm}>
-      <textarea />
-      <div className={styles.commentFormMeta}>
-        <img src={avatar || ''} className={styles.commentAvatar} alt="" />
-        <button className={`primary-btn ${styles.submitButton}`}>
-          Post Comment
-        </button>
-      </div>
+      <form onSubmit={handleSubmit}>
+        <textarea
+          name="body"
+          value={body}
+          onChange={handleTextAreaChange}
+          placeholder="Write your comment..."
+        />
+        <div className={styles.commentFormMeta}>
+          <Avatar username={username} imageUrl={imageUrl} variant="small" />
+          <button
+            type="submit"
+            className={`primary-btn ${styles.submitButton}`}
+          >
+            Post Comment
+          </button>
+        </div>
+      </form>
     </div>
   )
 }
 
-const CommentsList = ({ comments }: { comments: Comment[] }) => (
-  <>
-    {comments.map((comment) => (
-      <div className={styles.comment} key={comment.id}>
-        <div className={styles.commentBody}>{comment.body}</div>
-        <div className={styles.commentMeta}>
-          <img
-            src={comment.author.image || ''}
-            className={styles.commentAvatar}
-            alt=""
-          />
-          <Link href={`/profile/${comment.author.username}`}>
-            {comment.author.username}
-          </Link>
-          <span>{formatDate(comment.createdAt)}</span>
+function CommentsList({
+  comments,
+  slug,
+}: {
+  comments: Comment[]
+  slug: string
+}) {
+  const dispatch = useAppDispatch()
+  async function handleDeleteClick(slug: string, id: number) {
+    await dispatch(deleteOne({ slug, id }))
+    dispatch(deleteComment(id))
+  }
+  return (
+    <>
+      {comments.map((comment) => (
+        <div className={styles.comment} key={comment.id}>
+          <div className={styles.commentBody}>{comment.body}</div>
+          <div className={styles.commentMeta}>
+            <img
+              src={comment.author.image || ''}
+              className={styles.commentAvatar}
+              alt=""
+            />
+            <Link href={`/profile/${comment.author.username}`}>
+              {comment.author.username}
+            </Link>
+            <span>{formatDate(comment.createdAt)}</span>
+            <button
+              className={styles.iconButton}
+              onClick={() => handleDeleteClick(slug, comment.id)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                />
+              </svg>{' '}
+            </button>
+          </div>
         </div>
-      </div>
-    ))}
-  </>
-)
+      ))}
+    </>
+  )
+}

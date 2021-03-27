@@ -1,13 +1,14 @@
 import { Link } from 'wouter'
-import type { Profile } from 'api/api'
 import styles from './Avatar.module.css'
 
 type Variant = 'small' | 'normal' | 'large'
 export function Avatar({
-  profile,
+  username,
+  imageUrl,
   variant,
 }: {
-  profile: Profile
+  username: string
+  imageUrl: string
   variant: Variant
 }) {
   const variantStyle =
@@ -19,9 +20,9 @@ export function Avatar({
       ? styles.avatarLarge
       : ''
   return (
-    <Link href={`/profile/${profile.username}`}>
+    <Link href={`/profile/${username}`}>
       <img
-        src={profile.image}
+        src={imageUrl}
         className={`${styles.avatar} ${variantStyle}`}
         alt=""
       />
